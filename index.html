@@ -1,0 +1,4684 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Betreuung – Touch-Tabelle</title>
+
+<link rel="manifest" href="manifest.webmanifest">
+
+<style>
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial,sans-serif;
+  background:#f4f7f8;
+  color:#263238;
+}
+
+header{
+  background:#6b8e9e;
+  color:white;
+  padding:14px;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+}
+
+nav{
+  display:flex;
+  gap:6px;
+  padding:8px;
+  background:white;
+  position:sticky;
+  top:0;
+  z-index:10;
+  overflow-x:auto;
+}
+
+nav button{
+  flex:1;
+  min-width:110px;
+  padding:14px 8px;
+  border:0;
+  border-radius:10px;
+  background:#dce5e9;
+  font-size:14px;
+}
+
+nav button.active{
+  background:#6b8e9e;
+  color:white;
+}
+  
+#tab-woche,
+#tab-wochenuebersicht{
+  font-size:12px;
+  padding-left:4px;
+  padding-right:4px;
+}
+
+
+main{
+  padding:12px;
+  max-width:1000px;
+  margin:auto;
+}
+
+h2{
+  margin-top:8px;
+}
+
+.section{
+  background:white;
+  border-radius:14px;
+  padding:12px;
+  margin-bottom:14px;
+  box-shadow:0 1px 4px #0001;
+}
+  .today-paired {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+}
+  
+
+.fruit-class-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.fruit-class-column {
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+  .fruit-class-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+
+
+@media (max-width: 600px) {
+  .today-paired {
+    grid-template-columns: 1fr;
+  }
+}
+
+.daily-plan-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  align-items: start;
+}
+
+.daily-plan-row > .section {
+  min-width: 0;
+  margin-bottom: 8px;
+}
+
+.daily-plan-row .controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+}
+
+.daily-plan-row .controls select,
+.daily-plan-row .controls input {
+  min-width: 0;
+  padding: 3px;
+  font-size: 12px;
+}
+
+.daily-plan-row .controls select:first-child {
+  max-width: 65px;
+}
+
+.daily-plan-row .controls input[type="time"] {
+  width: 65px;
+}
+
+.daily-plan-row .controls input[type="text"] {
+  width:160px;
+  min-width:160px;
+  box-sizing:border-box;
+}
+
+.daily-plan-row .controls .smallbtn {
+  padding: 4px;
+  font-size: 11px;
+}
+
+@media (max-width: 600px) {
+  .daily-plan-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.datebar{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+input[type=date]{
+  font-size:18px;
+  padding:10px;
+  border-radius:9px;
+  border:1px solid #bbb;
+}
+input[type=time]{
+  font-size:18px;
+  padding:10px;
+  border-radius:9px;
+  border:1px solid #bbb;
+}
+  .controls input[type="time"] {
+  width: 60px;
+  font-size: 14px;
+  padding: 4px;
+}
+  .controls input[type="time"] {
+  background: #555555;
+  color: white;
+  border: 1px solid #444444;
+  border-radius: 6px;
+  color-scheme: dark;
+}
+button{
+  cursor:pointer;
+}
+
+.smallbtn{
+  border:0;
+  border-radius:9px;
+  padding:10px 13px;
+  background:#dce5e9;
+  font-size:15px;
+}
+  .time-button {
+  color: #ffffff;
+  font-weight: bold;
+  font-size: 17px;
+  text-shadow: 0 1px 1px #333333;
+  min-width: 85px;
+}
+.today-class-buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin:10px 0 14px;
+}
+
+.today-class-buttons .smallbtn.active-class{
+  background:#6b8e9e;
+  color:white;
+}
+  
+.today-arrival-overview {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 12px 0;
+}
+
+.arrival-column {
+  min-width: 0;
+  padding: 12px;
+  background: #ffffff;
+  border: 1px solid #d5dfe3;
+  border-radius: 10px;
+}
+
+.arrival-column h3 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.arrival-table {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.arrival-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 100px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px;
+  border-bottom: 1px solid #d5e5eb;
+  font-size: 13px;
+}
+
+.arrival-heading {
+  font-weight: bold;
+  background: #e4f2f6;
+  border-radius: 6px;
+}
+
+.arrival-group {
+  border: 1px solid #d5dfe3;
+  border-radius: 8px;
+  padding: 5px;
+  background: #fff;
+}
+.late-arrival-fields {
+  display: grid;
+  grid-template-columns: 0.8fr 0.8fr 1.4fr;
+  gap: 6px;
+  align-items: end;
+}
+
+.late-arrival-field {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.late-arrival-field label {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.late-arrival-field select {
+  width: 100%;
+  min-width: 0;
+  padding: 7px 2px;
+  font-size: 12px;
+}
+.arrival-group > strong {
+  display: block;
+  padding: 6px;
+  color: #355c73;
+  font-size: 14px;
+}
+
+.arrival-row input[type="time"] {
+  width: 100%;
+  min-width: 0;
+  padding: 6px 3px;
+  border: 1px solid #cbdbe2;
+  border-radius: 6px;
+  background: #fff;
+  color: #263238;
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .today-arrival-overview {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .arrival-column {
+    padding: 8px;
+  }
+}
+
+.child{
+  background:#fafafa;
+  border-left:7px solid #ccc;
+  border-radius:10px;
+  padding:10px;
+  margin:8px 0;
+}
+
+.childtitle{
+  font-weight:bold;
+  margin-bottom:8px;
+}
+
+.controls{
+  display:flex;
+  gap:3px;
+  flex-wrap:nowrap;
+  align-items:center;
+}
+
+.controls .time-button{
+  min-width:0;
+  padding-left:5px;
+  padding-right:5px;
+  font-size:14px;
+}
+
+.controls input[type="time"] {
+  width:55px;
+  min-width:0;
+  padding:3px 1px;
+  font-size:12px;
+}
+
+select{
+  font-size:17px;
+  padding:9px;
+  border-radius:8px;
+  border:1px solid #bbb;
+  background:white;
+}
+
+.planned{
+  background:#fff4b8;
+}
+
+.exception{
+  border:3px solid #e67e22;
+background:#fff0e0;
+}
+
+.regular-row{
+  display:grid;
+  grid-template-columns:120px repeat(5,1fr);
+  gap:6px;
+  align-items:center;
+  margin:5px 0;
+}
+
+.regular-row select{
+  width:100%;
+  font-size:14px;
+  padding:7px;
+}
+
+.regular-head{
+  display:grid;
+  grid-template-columns:120px repeat(5,1fr);
+  gap:6px;
+  font-weight:bold;
+  margin-bottom:5px;
+}
+
+.daybox{
+  background:#f5f7f8;
+  border-radius:8px;
+  padding:4px;
+}
+
+.going{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:9px;
+  border-radius:9px;
+  margin:5px 0;
+}
+  .going-time-separator{
+  border-top:2px solid #9aaeb6;
+  margin:12px 0;
+}
+.going-info{
+
+  font-size:14px;
+
+  color:#555;
+
+  margin-left:8px;
+}
+.time{
+  font-size:21px;
+  font-weight:bold;
+  min-width:65px;
+}
+
+.type{
+  font-size:17px;
+}
+
+.classname{
+  font-size:12px;
+  opacity:.7;
+}
+
+.notice{
+  background:#eef5f7;
+  padding:10px;
+  border-radius:9px;
+  margin:8px 0;
+}
+
+@media(max-width:700px){
+  .regular-row,
+  .regular-head{
+    grid-template-columns:80px repeat(5,1fr);
+  }
+
+  .regular-row select{
+    font-size:12px;
+  }
+}
+.week-controls{
+  margin:12px 0 18px;
+}
+
+.week-controls input{
+  font-size:18px;
+  padding:8px;
+  margin-left:8px;
+}
+
+.weekly-title{
+  font-size:22px;
+  font-weight:700;
+  margin-bottom:2px;
+}
+
+.weekly-subtitle{
+  font-size:16px;
+  margin-bottom:12px;
+}
+
+.weekly-table{
+  width:100%;
+  border-collapse:collapse;
+  table-layout:fixed;
+  font-size:13px;
+}
+
+.weekly-table th,
+.weekly-table td{
+  padding:4px 3px;
+  text-align:center;
+  border-bottom:1px solid #d8d8d8;
+}
+
+.weekly-table .child-col{
+  width:24%;
+  text-align:left;
+}
+
+.weekly-table .day-col{
+  font-weight:700;
+}
+.day-holiday{
+  font-size:10px;
+  font-weight:700;
+  margin-top:3px;
+}
+.weekly-table .day-col span{
+  font-weight:400;
+  font-size:11px;
+}
+
+.weekly-table .child-name{
+  text-align:left;
+  white-space:nowrap;
+  overflow:hidden;
+}
+
+.weekly-table .day-start{
+  border-left:2px solid #777;
+}
+
+.weekly-table .subhead th{
+  font-size:11px;
+  font-weight:600;
+}
+
+.weekly-table .class-row{
+  break-after:avoid;
+  page-break-after:avoid;
+}
+  
+  .weekly-table .class-row td{
+  text-align:left;
+  font-weight:700;
+  padding-top:8px;
+  padding-bottom:3px;
+  border-bottom:1px solid #999;
+}
+
+@media print{
+
+  body{
+    background:white;
+  }
+
+  .app-header,
+  nav,
+  .week-controls,
+  #heute,
+  #alle,
+  #wochenplanung,
+  #wergeht{
+    display:none !important;
+  }
+
+  #wochenuebersicht{
+    display:block !important;
+  }
+
+  .weekly-title{
+    display:block !important;
+    font-size:12px !important;
+    margin:0 0 2px 0 !important;
+  }
+
+  .weekly-subtitle{
+    display:block !important;
+    font-size:10px !important;
+    margin:0 0 5px 0 !important;
+  }
+
+  .weekly-table{
+    font-size:8px !important;
+    margin:0 !important;
+  } 
+  
+  .weekly-page-break{
+   display:block important;
+    break-bevore:page !important;
+    page-break-bevore:always !important;
+    high:0 !important;
+  }
+  .weekly-second-table{
+    break-before:page !important;
+    page-break-before:always !important;
+  }
+  .weekly-table .print-page-break{
+    break-befor:page;
+    page-break-before:always;
+  }
+
+  .weekly-table th,
+  .weekly-table td{
+    padding:2px !important;
+  }
+
+  @page{
+    size:A4 portrait;
+    margin:2mm;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="app-header" id="appHeader">Betreuung – Touch-Tabelle</header>
+
+<nav>
+  <button id="tab-heute" onclick="showTab('heute')">Heute</button>
+  <button id="tab-alle" onclick="showTab('alle')">Alle Kinder</button>
+  <button id="tab-woche" onclick="showTab('woche')">Wochenplanung</button>
+  <button id="tab-geht" onclick="showTab('geht')">Wer geht wann?</button>
+<button id="tab-wochenuebersicht" class="tab" onclick="showTab('wochenuebersicht')">Wochenübersicht</button>
+<button id="tab-flex" class="tab" onclick="showTab('flex')">Flex-Kinder</button>
+<button id="tab-archiv" class="tab" onclick="showTab('archiv')">Archiv</button>
+</nav>
+<main>
+<section id="wochenuebersicht" class="view">
+  <h2>Wochenübersicht</h2>
+
+    <div class="week-controls">
+
+    <label>
+      Woche:
+      <input
+        type="date"
+        id="weekPicker"
+        onchange="renderWeeklyOverview()"
+      >
+    </label>
+
+    <br><br>
+
+    <label>
+      Tag schließen:
+      <input
+        type="date"
+        id="closedDate"
+      >
+    </label>
+
+    <input
+      type="text"
+      id="closedReason"
+      placeholder="Grund, z. B. Fortbildung"
+    >
+
+    <button
+      class="smallbtn"
+      onclick="closeDay(
+        document.getElementById('closedDate').value,
+        document.getElementById('closedReason').value
+      )">
+      Tag schließen
+    </button>
+
+  </div>
+
+  <div id="weeklyOverview"></div>
+</section>
+<section id="heute" class="view">
+
+  <h2>Heute - <span id="heuteDatum"></span></h2>
+
+  <div class="today-class-buttons">
+
+    <button class="smallbtn active-class"
+      onclick="showTodayClass(1)">
+      Klasse 1
+    </button>
+
+    <button class="smallbtn"
+      onclick="showTodayClass(2)">
+      Klasse 2
+    </button>
+
+    <button class="smallbtn"
+      onclick="showTodayClass(3)">
+      Klasse 3
+    </button>
+
+    <button class="smallbtn"
+      onclick="showTodayClass(4)">
+      Klasse 4
+    </button>
+
+  </div>
+  
+
+<div class="today-arrival-overview">
+
+  <div class="arrival-column">
+
+    <h3>Reguläre Ankunft</h3>
+
+    <div id="regularArrivalList"></div>
+
+  </div>
+
+  <div class="arrival-column">
+
+    <h3>Späte Ankunft</h3>
+
+    <div id="lateArrivalList"></div>
+    <div id="lateArrivalForm"></div>
+
+  </div>
+
+</div>
+
+  <div id="todayList"></div>
+
+</section>
+
+
+
+<section id="alle" class="view" style="display:none">
+
+  <h2>Alle Kinder</h2>
+
+  <div class="today-class-buttons">
+
+    <button class="smallbtn active-class"
+
+      onclick="showChildSubTab('kind')">
+
+      Kind verwalten
+
+    </button>
+
+    <button class="smallbtn"
+
+      onclick="showChildSubTab('projekte')">
+
+      Projekte
+
+    </button>
+    
+
+<button class="smallbtn"
+
+  onclick="showChildSubTab('projektarchiv')">
+
+  Projektarchiv
+
+</button>
+
+    <button class="smallbtn"
+
+      onclick="showChildSubTab('obstgeld')">
+
+      Obstgeld
+
+    </button>
+    <button class="smallbtn" 
+      onclick="showChildSubTab('klassenlisten')
+      ">Klassenlisten</button>
+
+  </div>
+
+  <!-- UNTERREITER: KIND VERWALTEN -->
+
+  <div id="childSubKind">
+
+    <div class="section">
+
+      <h3>Kind auswählen</h3>
+
+      <select id="childManagementSelect"
+
+        onchange="selectChildManagement(this.value)">
+
+        <option value="">Bitte Kind auswählen</option>
+
+      </select>
+
+      <div id="childManagement"></div>
+
+    </div>
+
+  </div>
+<!-- UNTERREITER: PROJEKTE -->
+
+  <div id="childSubProjekte" style="display:none">
+
+    <div class="section">
+
+      <h3>Projekt anlegen</h3>
+
+      <input
+
+        type="text"
+
+        id="newProjectName"
+
+        placeholder="Projekt, z. B. Herbstbasteln"
+
+        style="pointer-events:auto;">
+
+      <input
+
+        type="number"
+
+        id="newProjectAmount"
+
+        placeholder="Betrag (optional)"
+
+        step="0.01">
+
+      <input
+
+        type="date"
+
+        id="newProjectDue">
+
+      <button class="smallbtn" onclick="addProject()">
+
+        Projekt anlegen
+
+      </button>
+
+      <div id="projectList"></div>
+
+    </div>
+
+    <div class="section">
+
+      <h3>Offene Zahlungen</h3>
+
+      <select id="openProjectSelect"
+
+        onchange="renderOpenProject()">
+
+        <option value="">Bitte Projekt auswählen</option>
+
+      </select>
+
+      <div id="openProjectList"></div>
+
+    </div>
+
+  </div>
+  
+
+<!-- UNTERREITER: PROJEKTARCHIV -->
+
+<div id="childSubProjektarchiv" style="display:none">
+
+  <div class="section">
+
+    <h3>Abgeschlossene Projekte</h3>
+
+    <div id="archivedProjectList"></div>
+
+  </div>
+
+  <div class="section">
+
+    <h3>Offene Beträge aus archivierten Projekten</h3>
+
+    <div id="archivedOpenPayments"></div>
+
+  </div>
+
+</div>
+
+  <!-- UNTERREITER: OBSTGELD -->
+
+  <div id="childSubObstgeld" style="display:none">
+
+    <div class="section">
+
+      <h3>Obstgeld pro Schuljahr</h3>
+
+      <label for="fruitSchoolYear">Schuljahr</label>
+
+      <select id="fruitSchoolYear"
+
+        onchange="renderFruitMoney()">
+
+        <option value="2026/27">2026/27</option>
+
+      </select>
+
+      <label for="fruitAmount">Betrag pro Kind in Euro</label>
+
+      <input
+
+        type="number"
+
+        id="fruitAmount"
+
+        min="0"
+
+        step="0.01"
+
+        value="20"
+
+        onchange="saveFruitAmount()">
+
+      <button class="smallbtn"
+
+        onclick="renderFruitMoney()">
+
+        Zahlungen anzeigen
+
+      </button>
+
+    </div>
+
+    <div class="section">
+
+      <h3>Offene Zahlungen</h3>
+
+      <div id="fruitOpenList"></div>
+
+    </div>
+
+    <div class="section">
+
+      <h3>Zahlungsübersicht</h3>
+
+      <div id="fruitPaidList"></div>
+
+    </div>
+
+  </div>
+    <!-- UNTERREITER: KLASSENLISTEN -->
+  <div id="childSubKlassenlisten" style="display:none">
+<div class="section">
+  <h3>Eigene Klassenlisten</h3>
+
+  <label for="classListName">Name der Liste</label>
+  <input type="text" id="classListName"
+    placeholder="z. B. Bastelprojekt">
+
+  <label for="classListClass">Klasse auswählen</label>
+  <select id="classListClass">
+    <option value="all">Alle Kinder</option>
+    <option value="Klasse 1 Affen">Klasse 1 Affen</option>
+    <option value="Klasse 1 Zebra">Klasse 1 Zebra</option>
+    <option value="Klasse 2 Affen">Klasse 2 Affen</option>
+    <option value="Klasse 2 Zebra">Klasse 2 Zebra</option>
+    <option value="Klasse 3">Klasse 3</option>
+    <option value="Klasse 4">Klasse 4</option>
+  </select>
+
+  <p>Die drei Spalten kannst du selbst benennen:</p>
+
+  <label for="classListHeading1">Spalte 1</label>
+  <input type="text" id="classListHeading1"
+    placeholder="z. B. Begonnen">
+
+  <label for="classListHeading2">Spalte 2</label>
+  <input type="text" id="classListHeading2"
+    placeholder="z. B. Fertig">
+
+  <label for="classListHeading3">Spalte 3</label>
+  <input type="text" id="classListHeading3"
+    placeholder="z. B. Mitgenommen">
+
+  <button class="smallbtn"
+    onclick="createClassList()">
+    Liste erstellen
+  </button>
+
+</div>
+<div class="section">
+
+  <h3>Liste bearbeiten</h3>
+
+  <div id="classListArea"></div>
+
+</div>
+    
+<div class="section">
+
+  <h3>Alle Kinder nach Klasse</h3>
+
+  <div id="allList"></div>
+
+</div>
+  </div>
+</section>
+
+<section id="woche" class="view" style="display:none">
+
+  <h2>Wochenplanung</h2>
+
+ <div class="section">
+    <div class="datebar">
+      <strong>Datum:</strong>
+      <input type="date" id="selectedDate" onchange="renderDailyPlan()">
+      <button class="smallbtn" onclick="goToday()">Tagesplanung</button>
+      <button class="smallbtn" onclick="showRegular()">Regelmäßige Woche</button>
+    </div>
+
+    <div id="dateInfo" class="notice"></div>
+  </div>
+
+  <div id="dailyPlanning"></div>
+
+  <div id="regularPlanning" style="display:none"></div>
+
+</section>
+
+<section id="geht" class="view" style="display:none">
+  <h2>Wer geht heute?</h2>
+  <div id="goingList"></div>
+</section>
+<section id="flex" class="view" style="display:none">
+  <h2>Flex-Kinder</h2>
+  <div id="flexList"></div>
+</section>
+<section id="archiv" class="view" style="display:none">
+
+  <h2>Archiv – abgemeldete Kinder</h2>
+
+  <div id="archivList"></div>
+
+</section>
+</main>
+
+<script>
+
+const classes = [
+  ["Klasse 1 Affen","blau",9],
+  ["Klasse 1 Zebra","blau",6],
+  ["Klasse 2 Affen","grün",11],
+  ["Klasse 2 Zebra","grün",13],
+  ["Klasse 3","gelb",12],
+  ["Klasse 4","rot",19]
+];
+
+let childClassOverrides=load("childClassOverrides",{});
+let childNames=load("childNames",{});
+let inactiveChildren=load("inactiveChildren",{});
+let additionalChildren=load("additionalChildren",[]);
+
+const children=[];
+let number=1;
+
+classes.forEach(c=>{
+  for(let i=0;i<c[2];i++){
+    children.push({
+      id:"kind"+number,
+      name:childNames["kind"+number] || "Kind "+number,
+      className:childClassOverrides["kind"+number] || c[0],
+      color:c[1]
+    });
+    number++;
+  }
+});
+
+additionalChildren.forEach(child=>{
+  const className = childClassOverrides[child.id] || child.className;
+
+  children.push({
+    id: child.id,
+    name: childNames[child.id] || child.name,
+    className: className,
+    color: classes.find(c=>c[0]===className)?.[1] || "blau"
+  });
+});
+
+
+const times=[
+  "",
+  "11:00",
+  "12:00",
+  "12:45",
+  "13:00",
+  "13:10",
+  "13:45",
+  "14:00",
+  "14:30",
+  "14:35",
+  "15:00",
+  "15:30",
+  "16:00"
+];
+
+const types=["","B","Pp","T","M","Abh","Anr","G","—"];
+
+const weekdayNames=[
+  "Sonntag",
+  "Montag",
+  "Dienstag",
+  "Mittwoch",
+  "Donnerstag",
+  "Freitag",
+  "Samstag"
+];
+/* -------------------------
+   FERIEN UND FEIERTAGE NRW
+------------------------- */
+
+const nrwFerien = [
+  {
+    von:"2026-10-17",
+    bis:"2026-10-31",
+    name:"Herbstferien"
+  },
+  {
+    von:"2026-12-23",
+    bis:"2027-01-06",
+    name:"Weihnachtsferien"
+  },
+  {
+    von:"2027-03-22",
+    bis:"2027-04-03",
+    name:"Osterferien"
+  },
+  {
+    von:"2027-05-18",
+    bis:"2027-05-18",
+    name:"Pfingstferien"
+  },
+  {
+    von:"2027-07-19",
+    bis:"2027-08-31",
+    name:"Sommerferien"
+  }
+];
+
+
+function getFerien(date){
+
+  return nrwFerien.find(f =>
+    date >= f.von && date <= f.bis
+  ) || null;
+
+}
+  const nrwFeiertage = {
+  "2027-05-06":"Christi Himmelfahrt",
+  "2027-05-17":"Pfingstmontag",
+  "2027-05-27":"Fronleichnam"
+};
+
+function getFeiertag(date){
+
+  return nrwFeiertage[date] || "";
+
+}
+/* -------------------------
+   SPEICHER
+------------------------- */
+
+function load(key, fallback){
+  try{
+    const x=localStorage.getItem(key);
+    return x ? JSON.parse(x) : fallback;
+  }catch(e){
+    return fallback;
+  }
+}
+
+
+function save(key,value){
+  try{
+    localStorage.setItem(key,JSON.stringify(value));
+  }catch(e){
+    alert("Die Daten konnten nicht gespeichert werden. Bitte prüfe den verfügbaren Speicherplatz.");
+    console.error("Speicherfehler:",e);
+  }
+}
+
+function closeDay(date,reason){
+
+  if(!date) return;
+
+  if(!confirm("Soll dieser Tag wirklich geschlossen werden?")){
+    return;
+  }
+
+  closedDays[date]=reason || "Schule geschlossen";
+
+  save("closedDays",closedDays);
+
+  renderWeeklyOverview();
+
+}
+  function reopenDay(date){
+
+  if(!date) return;
+
+  if(!confirm("Soll die Schließung dieses Tages wirklich aufgehoben werden?")){
+    return;
+  }
+
+  delete closedDays[date];
+
+  save("closedDays",closedDays);
+
+  renderWeeklyOverview();
+}
+let attendance=load("attendance",{});
+let dailyPlans=load("dailyPlans",{});
+let regularPlans=load("regularPlans",{});
+let closedDays=load("closedDays",{});
+let regularArrivals=load("regularArrivals",{});
+let lateArrivals=load("lateArrivals",{});
+
+
+/*
+  Falls eine ältere Version bereits "actuals" benutzt hat,
+  werden die Daten übernommen.
+*/
+if(Object.keys(attendance).length===0){
+  const old=load("actuals",{});
+  if(Object.keys(old).length){
+    attendance=old;
+    save("attendance",attendance);
+  }
+}
+
+/* -------------------------
+   HILFSFUNKTIONEN
+------------------------- */
+
+
+function todayString(){
+  const d=new Date();
+  const year=d.getFullYear();
+  const month=String(d.getMonth()+1).padStart(2,"0");
+  const day=String(d.getDate()).padStart(2,"0");
+  return `${year}-${month}-${day}`;
+}
+
+
+function formatDate(date){
+  const d=new Date(date+"T12:00:00");
+  return d.toLocaleDateString("de-DE",{
+    weekday:"long",
+    day:"2-digit",
+    month:"2-digit",
+    year:"numeric"
+  });
+}
+
+function weekday(date){
+  return new Date(date+"T12:00:00").getDay();
+}
+
+
+function childColor(c){
+
+  const classEntry = classes.find(cls => cls[0] === c.className);
+
+  if(!classEntry) return "#ccc";
+
+  const map={
+    blau:"#78b9d8",
+    grün:"#9dbb9d",
+    gelb:"#d5bd67",
+    rot:"#c98f8f"
+  };
+
+  return map[classEntry[1]] || "#ccc";
+}
+
+
+function options(list,selected){
+  return list.map(x=>{
+    const value=x;
+    const text=x || "keine Planung";
+    return `<option value="${escapeClassListText(value)}" ${value===selected?"selected":""}>${escapeClassListText(text)}</option>`;
+  }).join("");
+}
+
+function typeOptions(selected){
+  return types.map(x=>{
+    const text=x || "–";
+   return `<option value="${escapeClassListText(x)}" ${x===selected?"selected":""}>${escapeClassListText(text)}</option>`;
+  }).join("");
+}
+
+/* -------------------------
+   PLANUNG ERMITTELN
+------------------------- */
+
+function getRegularPlan(childId,date){
+  const wd=weekday(date);
+
+  if(wd===0 || wd===6) return {
+    time:"",
+    type:""
+  };
+
+  return (
+    regularPlans[childId] &&
+    regularPlans[childId][wd]
+  ) || {
+    time:"",
+    type:""
+  };
+}
+
+function getPlan(childId,date){
+  if(
+    dailyPlans[date] &&
+    dailyPlans[date][childId]
+  ){
+    return {
+      ...dailyPlans[date][childId],
+      exception:true
+    };
+  }
+
+  return {
+    ...getRegularPlan(childId,date),
+    exception:false
+  };
+}
+
+/* -------------------------
+   TABS
+------------------------- */
+
+function showTab(tab){
+
+  document.querySelectorAll(".view").forEach(x=>{
+    x.style.display="none";
+  });
+
+  document.querySelectorAll("nav button").forEach(x=>{
+    x.classList.remove("active");
+  });
+
+  document.getElementById(tab).style.display="block";
+  document.getElementById("tab-"+tab).classList.add("active");
+  if(tab==="wochenuebersicht"){
+  document.getElementById("wochenuebersicht").style.display="block";
+  renderWeeklyOverview();
+}
+  if(tab==="heute") renderToday();
+  
+if(tab==="alle"){
+  renderAll();
+  showChildSubTab("kind");
+}
+
+  if(tab==="woche") renderDailyPlan();
+  if(tab==="geht") renderGoing();
+  if(tab==="flex") renderFlex();
+  if(tab==="archiv") renderArchive();
+  if(tab==="wochenuebersicht"){const p=document.getElementById("weekPicker");if(p&&!p.value)p.value=todayString();renderWeeklyOverview()
+  }
+}
+  
+
+
+function showChildSubTab(tab){
+
+  document.getElementById("childSubKind").style.display =
+    tab === "kind" ? "block" : "none";
+
+  document.getElementById("childSubProjekte").style.display =
+    tab === "projekte" ? "block" : "none";
+
+  document.getElementById("childSubProjektarchiv").style.display =
+    tab === "projektarchiv" ? "block" : "none";
+
+  document.getElementById("childSubObstgeld").style.display =
+    tab === "obstgeld" ? "block" : "none";
+
+  document.getElementById("childSubKlassenlisten").style.display =
+    tab === "klassenlisten" ? "block" : "none";
+
+  const buttons = document.querySelectorAll(
+    '#alle .today-class-buttons button'
+  );
+
+  buttons.forEach(button => {
+    button.classList.remove("active-class");
+  });
+
+  const buttonIndex = {
+    kind: 0,
+    projekte: 1,
+    projektarchiv: 2,
+    obstgeld: 3,
+    klassenlisten: 4
+  }[tab];
+
+  if(buttons[buttonIndex]){
+    buttons[buttonIndex].classList.add("active-class");
+  }
+
+  if(tab === "projekte"){
+    renderProjects();
+  }
+  if(tab === "projektarchiv"){
+  renderProjectArchive();
+}
+
+  if(tab === "obstgeld"){
+    renderFruitMoney();
+  }
+
+  if(tab === "klassenlisten"){
+    renderClassLists();
+  }
+}
+
+/* -------------------------
+   HEUTE
+------------------------- */
+let todayClass=1;
+
+function showTodayClass(classNumber){
+
+  todayClass=classNumber;
+
+  document.querySelectorAll(".today-class-buttons button").forEach((button,i)=>{
+
+    button.classList.toggle(
+      "active-class",
+      i+1===classNumber
+    );
+
+  });
+
+  renderToday(todayClass);
+
+}
+  function renderToday(classNumber=1){
+
+  const date=todayString();
+
+  document.getElementById("heuteDatum").textContent =
+    shortDate(date);
+
+  let html="";
+
+  let selectedClasses=[];
+
+  if(classNumber===1){
+    selectedClasses=[
+      "Klasse 1 Affen",
+      "Klasse 1 Zebra"
+    ];
+  }
+
+  if(classNumber===2){
+    selectedClasses=[
+      "Klasse 2 Affen",
+      "Klasse 2 Zebra"
+    ];
+  }
+
+  if(classNumber===3){
+    selectedClasses=[
+      "Klasse 3"
+    ];
+  }
+
+  if(classNumber===4){
+    selectedClasses=[
+      "Klasse 4"
+    ];
+  }
+  if(classNumber===1 || classNumber===2){
+    html += '<div class="today-paired">';
+  }
+  selectedClasses.forEach(className=>{
+
+    html+=`
+      <div class="section">
+
+        <h3>${escapeClassListText(className)}</h3>
+    `;
+
+   children
+      .filter(c=>c.className===className && !inactiveChildren[c.id])
+      .forEach(c=>{
+        const a=attendance[date]?.[c.id] || {};
+
+        html+=`
+          <div class="child"
+               style="border-left-color:${childColor(c)}">
+
+            <div class="childtitle">
+                            ${escapeClassListText(c.name)}
+              <span class="classname">${escapeClassListText(c.className)}</span>
+            </div>
+
+            <div class="controls">
+
+              
+
+<button id="arrivalButton-${c.id}" class="smallbtn time-button"
+
+  style="background:${childColor(c)}"
+
+  onclick="setArrival('${c.id}')">
+
+  ${a.ankommen
+  ? escapeClassListText(a.ankommen)
+  : "Ankommen"}
+
+</button>
+
+<input
+
+                id="departureInput-${c.id}"
+
+                type="time"
+
+  value=""
+
+  onchange="changeArrival('${c.id}',this.value)"
+
+  title="Ankunftszeit manuell eintragen oder korrigieren">
+
+      <button id="departureButton-${c.id}" class="smallbtn time-button"   
+
+  style="background:${childColor(c)}"
+                onclick="setDeparture('${c.id}')">
+                ${a.gehen
+  ? escapeClassListText(a.gehen)
+  : "Gehen"}
+              </button>
+
+              <input
+                type="time"
+               value="" 
+                onchange="changeDeparture('${c.id}',this.value)"
+                title="Gehzeit eintragen oder korrigieren">
+
+            </div>
+
+          </div>
+        `;
+
+      });
+
+    html+=`
+      </div>
+    `;
+
+  });
+  if(classNumber===1 || classNumber===2){
+    html += '</div>';
+  }
+  document.getElementById("todayList").innerHTML=html;
+renderArrivalOverview();
+}
+  
+
+
+function renderArrivalOverview(){
+
+  const regularBox = document.getElementById("regularArrivalList");
+  const lateBox = document.getElementById("lateArrivalList");
+
+  if(!regularBox || !lateBox) return;
+
+  const classNumber = todayClass || 1;
+
+  const groupsByClass = {
+    1: ["Klasse 1 Affen","Klasse 1 Zebra"],
+    2: ["Klasse 2 Affen","Klasse 2 Zebra"],
+    3: ["Klasse 3"],
+    4: ["Klasse 4"]
+  };
+
+  const groups = groupsByClass[classNumber] || groupsByClass[1];
+
+  const days = [
+    ["Montag",1],
+    ["Dienstag",2],
+    ["Mittwoch",3],
+    ["Donnerstag",4],
+    ["Freitag",5]
+  ];
+
+  let html = `
+    <div class="arrival-table">
+      <div class="arrival-row arrival-heading">
+        <span>Wochentag</span>
+        <span>Ankunft</span>
+      </div>
+  `;
+
+  groups.forEach(group=>{
+
+    html += `
+      <div class="arrival-group">
+        <strong>${escapeClassListText(group)}</strong>
+    `;
+
+    days.forEach(([day,dayNumber])=>{
+
+      const key = dayNumber + "|" + group;
+      const time = regularArrivals[key] || "";
+
+      html += `
+        <label class="arrival-row">
+          <span>${day}</span>
+          <input
+            type="time"
+            value="${escapeClassListText(time)}"
+            onchange="changeRegularArrival('${key}',this.value)"
+            aria-label="${group}, ${day}">
+        </label>
+      `;
+    });
+
+    html += `</div>`;
+  });
+
+  regularBox.innerHTML = html;
+
+  renderLateArrivalList(lateBox);
+
+}
+
+
+function changeRegularArrival(key,time){
+
+  if(time){
+    regularArrivals[key] = time;
+  } else {
+    delete regularArrivals[key];
+  }
+
+  save("regularArrivals",regularArrivals);
+}
+
+
+
+function renderLateArrivalList(lateBox){
+
+  const date = todayString();
+  const dayNumber = weekday(date);
+
+  const formBox = document.getElementById("lateArrivalForm");
+
+  if(formBox){
+    formBox.innerHTML = `
+    <strong>Späte Ankunft eintragen</strong>
+
+<label for="lateChild">Kind</label>
+
+<select id="lateChild">
+
+  <option value="">Kind auswählen</option>
+
+  ${children
+
+    .filter(c=>!inactiveChildren[c.id])
+
+    .map(c=>`
+
+      <option value="${escapeClassListText(c.id)}">
+
+        ${escapeClassListText(c.name)} – ${escapeClassListText(c.className)}
+
+      </option>
+
+    `).join("")}
+
+</select>
+      <div class="arrival-group">
+            <div class="late-arrival-fields">
+      <div class="late-arrival-field">
+        <label for="lateReason">Grund</label>
+        <select id="lateReason">
+          <option value="Fö">Fö</option>
+          <option value="Musik">Musik</option>
+          <option value="GAG">GAG</option>
+        </select>
+      </div>
+      <div class="late-arrival-field">
+        <label for="lateTime">Uhrzeit</label>
+        <select id="lateTime">
+          <option value="12:05">12:05</option>
+          <option value="12:50">12:50</option>
+          <option value="12:00">12:00</option>
+          <option value="12:30">12:30</option>
+          <option value="13:00">13:00</option>
+          <option value="13:10">13:10</option>
+          <option value="13:30">13:30</option>
+          <option value="14:00">14:00</option>
+          <option value="14:30">14:30</option>
+        </select>
+      </div>
+      <div class="late-arrival-field">
+        <label for="lateType">Art des Termins</label>
+        <select id="lateType" onchange="toggleLateDate()">
+          <option value="weekly">Wöchentlich</option>
+          <option value="once">Einmalig</option>
+        </select>
+      </div>
+    </div>
+
+        <div id="lateDateBox" style="display:none">
+          <label>Datum</label>
+          <input id="lateDate" type="date">
+        </div>
+
+        <div id="lateWeekdayBox">
+          <label>Wochentag</label>
+          <select id="lateWeekday">
+            <option value="1">Montag</option>
+            <option value="2">Dienstag</option>
+            <option value="3">Mittwoch</option>
+            <option value="4">Donnerstag</option>
+            <option value="5">Freitag</option>
+          </select>
+        </div>
+
+        <button class="smallbtn" onclick="addLateArrival()">
+          Termin speichern
+        </button>
+      </div>
+    `;
+  }
+
+  const groupsByClass = {
+    1: ["Klasse 1 Affen","Klasse 1 Zebra"],
+    2: ["Klasse 2 Affen","Klasse 2 Zebra"],
+    3: ["Klasse 3"],
+    4: ["Klasse 4"]
+  };
+
+  const selectedClasses =
+    groupsByClass[todayClass || 1] || groupsByClass[1];
+
+  const entries = Object.entries(lateArrivals).filter(([id,entry])=>{
+
+    if(!entry) return false;
+
+    const child = children.find(c=>c.id===entry.childId);
+
+    if(!child || !selectedClasses.includes(child.className)){
+      return false;
+    }
+
+    if(entry.date){
+      return entry.date === date;
+    }
+
+    return Number(entry.weekday) === dayNumber;
+  });
+
+  if(entries.length === 0){
+    lateBox.innerHTML =
+      "<p>Für heute sind keine späten Ankünfte eingetragen.</p>";
+    return;
+  }
+
+  entries.sort((a,b)=>
+    (a[1].time || "").localeCompare(b[1].time || "")
+  );
+
+  lateBox.innerHTML = entries.map(([id,entry])=>{
+
+    const child = children.find(c=>c.id===entry.childId);
+
+    if(!child) return "";
+
+    return `
+      <div class="arrival-group">
+        <strong>${escapeClassListText(entry.time || "--:--")} · ${escapeClassListText(entry.reason || "")}</strong>
+                <div>${escapeClassListText(child.name)}</div>
+        <small>${escapeClassListText(child.className)}</small>
+        <button class="smallbtn"
+          onclick="deleteLateArrival('${escapeClassListText(id)}')">
+          Löschen
+        </button>
+      </div>
+    `;
+
+  }).join("");
+}
+
+
+function deleteLateArrival(id){
+
+  if(!lateArrivals[id]) return;
+
+  if(!confirm("Diesen Termin wirklich löschen?")) return;
+
+  delete lateArrivals[id];
+
+  save("lateArrivals",lateArrivals);
+
+  renderArrivalOverview();
+}
+
+
+
+function toggleLateDate(){
+
+  const type = document.getElementById("lateType").value;
+
+  document.getElementById("lateDateBox").style.display =
+    type === "once" ? "block" : "none";
+
+  document.getElementById("lateWeekdayBox").style.display =
+    type === "weekly" ? "block" : "none";
+}
+
+
+function addLateArrival(){
+
+  const childId = document.getElementById("lateChild").value;
+  const reason = document.getElementById("lateReason").value;
+  const time = document.getElementById("lateTime").value;
+  const type = document.getElementById("lateType").value;
+
+  if(!childId || !time){
+    alert("Bitte Kind und Uhrzeit auswählen.");
+    return;
+  }
+
+  const entry = {
+    childId: childId,
+    reason: reason,
+    time: time
+  };
+
+  if(type === "weekly"){
+
+    entry.weekday =
+      Number(document.getElementById("lateWeekday").value);
+
+  } else {
+
+    const date = document.getElementById("lateDate").value;
+
+    if(!date){
+      alert("Bitte ein Datum auswählen.");
+      return;
+    }
+
+    entry.date = date;
+  }
+
+  const id = "late_" + Date.now();
+
+  lateArrivals[id] = entry;
+
+  save("lateArrivals",lateArrivals);
+
+  renderArrivalOverview();
+
+}
+
+function timeToMinutes(value){
+  if(!value) return null;
+
+  const teile = String(value).slice(0,5).split(":");
+
+  if(teile.length !== 2) return null;
+
+  return Number(teile[0]) * 60 + Number(teile[1]);
+}
+
+function currentTime(){
+  return new Date().toLocaleTimeString("de-DE",{
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
+
+function setArrival(id){
+
+const date=todayString();
+const a=attendance[date]?.[id] || {};
+const jetzt=currentTime();
+
+if(a.gehen && timeToMinutes(jetzt) > timeToMinutes(a.gehen)){
+alert("Die Ankommenszeit darf nicht nach der Gehzeit liegen.");
+return;
+}
+
+if(!attendance[date]) attendance[date]={};
+
+attendance[date][id]=attendance[date][id] || {};
+attendance[date][id].ankommen=jetzt;
+
+save("attendance",attendance);
+
+renderToday(todayClass);
+}
+  
+function changeArrival(id,time){
+
+  const date=todayString();
+
+  const a = attendance[date] && attendance[date][id]
+  ? attendance[date][id]
+  : {};
+
+    if(
+  time !== "" &&
+  a.gehen &&
+  timeToMinutes(time) > timeToMinutes(a.gehen)
+){
+  alert("Die Ankommenszeit darf nicht nach der Gehzeit liegen.");
+    const input = document.getElementById("departureInput-" + id);
+  if(input) input.value = "";
+  return;
+}
+
+  if(!attendance[date]) attendance[date]={};
+
+  attendance[date][id]=attendance[date][id] || {};
+
+  attendance[date][id].ankommen=time;
+
+      save("attendance",attendance);
+
+  const button = document.getElementById("arrivalButton-" + id);
+  if(button) button.textContent = time || "Ankommen";
+
+    const input = document.getElementById("departureInput-" + id);
+  if(input) input.value = "";
+}
+
+
+
+function setDeparture(id){
+
+  const date=todayString();
+
+  const a=attendance[date]?.[id] || {};
+
+  if(!a.ankommen){
+    alert("Bitte trage zuerst die Ankommenszeit ein.");
+    return;
+  }
+
+  const jetzt=currentTime();
+
+  if(timeToMinutes(jetzt) < timeToMinutes(a.ankommen)){
+    alert("Die Gehzeit darf nicht vor der Ankommenszeit liegen.");
+    return;
+  }
+
+  if(!attendance[date]) attendance[date]={};
+
+  attendance[date][id]=attendance[date][id] || {};
+
+  attendance[date][id].gehen=jetzt;
+
+  save("attendance",attendance);
+
+  renderToday(todayClass);
+}
+
+
+function changeDeparture(id,time){
+
+  const date=todayString();
+
+  const a=attendance[date]?.[id] || {};
+
+  if(time && !a.ankommen){
+    alert("Bitte trage zuerst die Ankommenszeit ein.");
+    renderToday(todayClass);
+    return;
+  }
+
+  if(time && timeToMinutes(time) < timeToMinutes(a.ankommen)){
+    alert("Die Gehzeit darf nicht vor der Ankommenszeit liegen.");
+    renderToday(todayClass);
+    return;
+  }
+
+  if(!attendance[date]) attendance[date]={};
+
+  attendance[date][id]=attendance[date][id] || {};
+
+  attendance[date][id].gehen=time;
+
+  save("attendance",attendance);
+
+  const button = document.getElementById("departureButton-" + id);
+if(button) button.textContent = time || "Gehen";
+
+const input = document.querySelector(
+  `input[onchange="changeDeparture('${id}',this.value)"]`
+);
+if(input) input.value = "";
+}
+
+/* -------------------------
+   ALLE KINDER
+------------------------- */
+
+function renderAll(){
+
+  let html="";
+
+  classes.forEach(c=>{
+
+    html+=`
+      <div class="section">
+        <h3>${c[0]}</h3>
+    `;
+
+    children
+      .filter(x=>x.className===c[0] && !inactiveChildren[x.id])
+      .forEach(x=>{
+        html+=`
+                  <div>${escapeClassListText(x.name)}</div>
+        `;
+      });
+
+    html+="</div>";
+  });
+  html = `
+    <div class="section">
+      <h3>Neues Kind aufnehmen</h3>
+
+      <label>Name des Kindes:</label>
+      <input type="text" id="newChildName" placeholder="Vor- und Nachname">
+
+      <label>Klasse:</label>
+      <select id="newChildClass">
+        ${classes.map(c=>`
+          <option value="${c[0]}">${c[0]}</option>
+        `).join("")}
+      </select>
+
+      <button class="smallbtn" onclick="addNewChild()">
+        Kind hinzufügen
+      </button>
+    </div>
+  ` + html;
+  const allList = document.getElementById("allList");
+if(allList) allList.innerHTML = html;
+
+
+  /* Kinderauswahl für Verwaltung / Notizen */
+
+  const select=document.getElementById("childManagementSelect");
+
+  if(select){
+
+    select.innerHTML=
+      `<option value="">Bitte Kind auswählen</option>`;
+
+    children.filter(c=>!inactiveChildren[c.id]).forEach(c=>{
+
+      const option=document.createElement("option");
+
+      option.value=c.id;
+      option.textContent=c.name;
+
+      select.appendChild(option);
+
+    });
+
+  }
+renderProjects();
+}
+  
+function addNewChild(){
+
+  const nameInput = document.getElementById("newChildName");
+  const classInput = document.getElementById("newChildClass");
+
+  const name = nameInput.value.trim();
+  const className = classInput.value;
+
+  if(!name){
+    alert("Bitte einen Namen eingeben.");
+    return;
+  }
+
+  const allIds = children.map(c=>{
+    const match = c.id.match(/^kind(\d+)$/);
+    return match ? Number(match[1]) : 0;
+  });
+
+  const nextNumber = Math.max(70, ...allIds) + 1;
+  const id = "kind" + nextNumber;
+
+  const classInfo = classes.find(c=>c[0]===className);
+
+  const child = {
+    id: id,
+    name: name,
+    className: className,
+    color: classInfo ? classInfo[1] : "blau"
+  };
+
+  additionalChildren.push(child);
+
+  save("additionalChildren", additionalChildren);
+
+  children.push(child);
+
+  renderAll();
+
+  alert(name + " wurde hinzugefügt.");
+}
+
+  function selectChildManagement(id){
+
+  const box=document.getElementById("childManagement");
+
+  if(!id){
+
+    box.innerHTML="";
+
+    return;
+  }
+
+  const child=children.find(c=>c.id===id);
+
+  if(!child) return;
+
+  box.innerHTML=`
+
+    <div class="section">
+
+      <h3>Kind verwalten</h3>
+
+<p>
+  Name des Kindes:
+  <input
+    type="text"
+    id="childNameInput"
+    value="${escapeClassListText(child.name)}"
+    placeholder="Vor- und Nachname">
+  <button
+    class="smallbtn"
+    onclick="saveChildName('${escapeClassListText(child.id)}')">
+    Namen speichern
+  </button>
+</p>
+
+<h3>${escapeClassListText(child.name)}</h3>
+
+
+<p>
+
+  <label>
+
+    <input
+
+      type="checkbox"
+
+      ${flexChildren.includes(child.id) ? "checked" : ""}
+
+      onchange="toggleFlexChild('${escapeClassListText(child.id)}',this.checked)">
+
+    Flexfunktion für dieses Kind aktiv
+
+  </label>
+
+</p>
+
+      
+
+<p>
+
+  Klasse:
+
+  <select id="childClassSelect"
+
+    onchange="changeChildClass('${escapeClassListText(child.id)}',this.value)">
+
+    ${classes.map(c => `
+
+      <option value="${c[0]}" ${child.className===c[0] ? "selected" : ""}>
+
+        ${c[0]}
+
+      </option>
+
+    `).join("")}
+
+  </select>
+
+</p>
+
+
+
+<div class="controls">
+
+  <button
+
+    class="smallbtn"
+
+    onclick="deactivateChild('${escapeClassListText(child.id)}')">
+
+    Kind aus Betreuung abmelden
+
+  </button>
+
+</div>
+      <div class="controls">
+
+        <input
+          type="text"
+          id="childNoteInput"
+          placeholder="z. B. Projekt bezahlt">
+
+        <button
+          class="smallbtn"
+          onclick="addChildNote('${child.id}')">
+          Eintrag speichern
+        </button>
+
+      </div>
+      <div class="section">
+
+        <h4>Projekte</h4>
+
+        <div id="childProjects"></div>
+
+      </div>
+      <div id="childNotes"></div>
+
+    </div>
+
+  `;
+
+    renderChildNotes(child.id);
+    renderChildProjects(child.id);
+
+}
+  
+
+
+function saveChildName(id){
+
+  const child = children.find(c => c.id === id);
+
+  if(!child) return;
+
+  const input = document.getElementById("childNameInput");
+  const name = input.value.trim();
+
+  if(!name){
+    alert("Bitte einen Namen eingeben.");
+    return;
+  }
+
+  childNames[id] = name;
+  save("childNames",childNames);
+
+  child.name = name;
+
+  const extraChild = additionalChildren.find(c=>c.id===id);
+
+  if(extraChild){
+    extraChild.name = name;
+    save("additionalChildren",additionalChildren);
+  }
+
+  renderAll();
+  renderProjectArchive();
+  selectChildManagement(id);
+}
+
+
+
+function deactivateChild(id){
+
+  const child = children.find(c => c.id === id);
+
+  if(!child) return;
+
+  if(!confirm(
+    "Soll " + child.name +
+    " wirklich aus der Betreuung abgemeldet werden? " +
+    "Die bisherigen Daten bleiben erhalten."
+  )){
+    return;
+  }
+
+  inactiveChildren[id] = {
+    name: child.name,
+    className: child.className,
+    date: todayString()
+  };
+
+  save("inactiveChildren",inactiveChildren);
+
+  renderAll();
+
+  const box = document.getElementById("childManagement");
+  if(box) box.innerHTML = "";
+
+}
+
+
+function renderArchive(){
+
+  const box = document.getElementById("archivList");
+
+  if(!box) return;
+
+  const inactiveIds = Object.keys(inactiveChildren);
+
+  let html = "";
+
+  if(inactiveIds.length === 0){
+
+    html += "<p>Es sind keine Kinder abgemeldet.</p>";
+
+  } else {
+
+    html += inactiveIds.map(id=>{
+
+      const child = children.find(c=>c.id===id);
+      const info = inactiveChildren[id];
+
+      const name = info.name || (child ? child.name : id);
+      const className = info.className || (child ? child.className : "");
+      const date = info.date || "";
+
+      return `
+        <div class="section">
+                   <h3>${escapeClassListText(name)}</h3>
+          <p>Frühere Klasse: ${escapeClassListText(className)}</p>
+          <p>Abgemeldet am: ${escapeClassListText(date)}</p>
+          <button class="smallbtn"
+            onclick="reactivateChild('${id}')">
+            Kind wieder anmelden
+          </button>
+        </div>
+      `;
+
+    }).join("");
+  }
+
+  html += "<h3>Archivierte Flex-Kinder</h3>";
+
+  const archivedFlex = archivedFlexChildren
+    .map(id=>children.find(c=>c.id===id))
+    .filter(child=>child);
+
+  if(archivedFlex.length === 0){
+
+    html += "<p>Es sind keine Flex-Kinder archiviert.</p>";
+
+  } else {
+
+    html += archivedFlex.map(child=>`
+
+      <div class="section">
+      <h3>${escapeClassListText(child.name)}</h3>
+        
+        <p>Klasse: ${escapeClassListText(child.className)}</p>
+        
+<button class="smallbtn"
+  onclick="printFlex('${child.id}')">
+  Flex-Tage drucken
+</button>
+
+        <button class="smallbtn"
+          onclick="restoreFlexChild('${child.id}')">
+          Flex-Kind wiederherstellen
+        </button>
+      </div>
+
+    `).join("");
+  }
+
+  box.innerHTML = html;
+}
+
+
+function reactivateChild(id){
+
+  const info = inactiveChildren[id];
+
+  if(!info) return;
+
+  if(!confirm(
+    "Soll dieses Kind wieder für die Betreuung angemeldet werden?"
+  )){
+    return;
+  }
+
+  delete inactiveChildren[id];
+
+  save("inactiveChildren", inactiveChildren);
+
+  renderArchive();
+  renderAll();
+
+}
+
+ 
+
+function changeChildClass(id,newClass){
+
+  const child = children.find(c => c.id === id);
+
+  if(!child) return;
+
+  childClassOverrides[id] = newClass;
+
+  save("childClassOverrides",childClassOverrides);
+
+  child.className = newClass;
+
+  const classInfo = classes.find(c => c[0] === newClass);
+  child.color = classInfo ? classInfo[1] : "blau";
+
+  const extraChild = additionalChildren.find(c=>c.id===id);
+
+  if(extraChild){
+    extraChild.className = newClass;
+    extraChild.color = child.color;
+    save("additionalChildren",additionalChildren);
+  }
+
+  renderAll();
+  renderProjectArchive();
+  selectChildManagement(id);
+}
+
+
+ function renderChildProjects(id){
+
+  const box=document.getElementById("childProjects");
+
+  if(!box) return;
+
+  const projects=load("projects",[]);
+  const participation=load("projectParticipation",{});
+  const paid=load("projectPaid",{});
+
+  if(!projects.length){
+    box.innerHTML="<p>Noch keine Projekte angelegt.</p>";
+    return;
+  }
+
+  let html="";
+
+  projects.forEach(project=>{
+
+    const checked=
+      participation[id] &&
+      participation[id][project.id]
+        ? "checked"
+        : "";
+
+    const paidChecked=
+      paid[id] && paid[id][project.id]
+        ? "checked"
+        : "";
+
+    html+=`
+      <div class="child">
+
+        <strong>${escapeClassListText(project.name)}</strong>
+
+        ${project.amount
+          ? `<div>Betrag: ${escapeClassListText(project.amount)} €</div>`
+          : ""}
+
+        ${project.due
+          ? `<div>Fällig: ${escapeClassListText(shortDate(project.due))}</div>`
+          : ""}
+
+        <label>
+          <input
+            type="checkbox"
+            ${checked}
+            onchange="toggleProjectParticipation('${id}','${project.id}')">
+          Nimmt teil
+        </label>
+
+        ${checked ? `
+          <br>
+          <label>
+            <input
+              type="checkbox"
+              ${paidChecked}
+              onchange="toggleProjectPaid('${id}','${project.id}')">
+            Bezahlt
+          </label>
+        ` : ""}
+
+      </div>
+    `;
+
+  });
+
+  box.innerHTML=html;
+
+} 
+  function addChildNote(id){
+
+  const input=document.getElementById("childNoteInput");
+
+  if(!input) return;
+
+  const text=input.value.trim();
+
+  if(!text) return;
+
+  const date=todayString();
+
+  const notes=load("childNotes",{});
+
+  if(!notes[id]){
+    notes[id]=[];
+  }
+
+  notes[id].push({
+    date:date,
+    text:text
+  });
+
+  save("childNotes",notes);
+
+  input.value="";
+
+  renderChildNotes(id);
+
+}
+  
+function toggleProjectParticipation(childId,projectId){
+
+  const participation=load("projectParticipation",{});
+
+  if(!participation[childId]){
+    participation[childId]={};
+  }
+
+  if(participation[childId][projectId]){
+
+    const project=load("projects",[])
+      .find(p=>p.id===projectId);
+
+    const projectName=project
+      ? project.name
+      : "dieses Projekt";
+
+    if(!confirm(
+      "Möchtest du die Teilnahme an „"+
+      projectName+
+      "“ für dieses Kind wirklich beenden?"
+    )){
+      return;
+    }
+
+    delete participation[childId][projectId];
+
+    save("projectParticipation",participation);
+
+    const paid=load("projectPaid",{});
+
+    if(paid[childId]){
+      delete paid[childId][projectId];
+      save("projectPaid",paid);
+    }
+
+  }else{
+
+    participation[childId][projectId]=true;
+
+    save("projectParticipation",participation);
+
+  }
+
+  renderChildProjects(childId);
+
+}
+
+  function toggleProjectPaid(childId,projectId){
+
+  const paid=load("projectPaid",{});
+
+  if(!paid[childId]){
+    paid[childId]={};
+  }
+
+  paid[childId][projectId]=
+    !paid[childId][projectId];
+
+  save("projectPaid",paid);
+
+  renderChildProjects(childId);
+}
+ 
+function renderChildNotes(id){
+
+  const box=document.getElementById("childNotes");
+
+  if(!box) return;
+
+  const notes=load("childNotes",{});
+  const list=notes[id] || [];
+
+  if(!list.length){
+    box.innerHTML="<p>Noch keine Einträge vorhanden.</p>";
+    return;
+  }
+
+  let html="";
+
+  list.slice().reverse().forEach((entry,index)=>{
+
+    const originalIndex=list.length-1-index;
+
+    html+=`
+      <div class="section">
+
+        <strong>${escapeClassListText(shortDate(entry.date))}</strong>
+
+        <div>${escapeClassListText(entry.text)}</div>
+
+        <button
+          class="smallbtn"
+          onclick="copyChildNote('${escapeClassListText(id)}',${originalIndex})">
+          Eintrag kopieren
+        </button>
+
+        <button
+          class="smallbtn"
+          onclick="deleteChildNote('${id}',${originalIndex})">
+          Eintrag löschen
+        </button>
+
+      </div>
+    `;
+
+  });
+
+  box.innerHTML=html;
+
+}
+  function copyChildNote(id,index){
+  const notes = load("childNotes",{});
+  const entry = notes[id] && notes[id][index];
+  if(!entry){
+    alert("Eintrag nicht gefunden.");
+    return;
+  }
+  const text = shortDate(entry.date) + "\n" + entry.text;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text)
+      .then(()=>{
+        alert("Eintrag kopiert. Du kannst ihn jetzt beim anderen Kind einfügen.");
+      })
+      .catch(()=>{
+        window.prompt("Bitte Text markieren und kopieren:",text);
+      });
+  } else {
+    window.prompt("Bitte Text markieren und kopieren:",text);
+  }
+}
+
+
+function deleteChildNote(id,index){
+
+  const notes = load("childNotes",{});
+
+  if(!notes[id] || !notes[id][index]){
+    alert("Eintrag nicht gefunden.");
+    return;
+  }
+
+  if(!confirm("Möchtest du diesen Eintrag wirklich löschen?")){
+    return;
+  }
+
+  notes[id].splice(index,1);
+
+  save("childNotes",notes);
+
+  renderChildNotes(id);
+
+}
+  function addProject(){
+
+  const nameInput=document.getElementById("newProjectName");
+  const amountInput=document.getElementById("newProjectAmount");
+  const dueInput=document.getElementById("newProjectDue");
+
+  const name=nameInput.value.trim();
+
+  if(!name){
+
+    alert("Bitte einen Projektnamen eingeben.");
+
+    return;
+  }
+
+  const projects=load("projects",[]);
+
+  projects.push({
+    id:"project_"+Date.now(),
+    name:name,
+    amount:amountInput.value || "",
+    due:dueInput.value || ""
+  });
+
+  save("projects",projects);
+
+  nameInput.value="";
+  amountInput.value="";
+  dueInput.value="";
+
+  renderProjects();
+
+}
+  function renderProjects(){
+
+  const box=document.getElementById("projectList");
+
+  if(!box) return;
+
+  const projects=load("projects",[]);
+
+  if(!projects.length){
+
+    box.innerHTML=`
+      <p>Noch keine Projekte angelegt.</p>
+    `;
+
+    return;
+  }
+
+  let html="";
+
+  projects.forEach(project=>{
+
+    html+=`
+      <div class="section">
+
+        <strong>${escapeClassListText(project.name)}</strong>
+
+        ${project.amount
+          ? `<div>Betrag: ${escapeClassListText(project.amount)} €</div>`
+          : ""}
+
+        
+        ${project.due
+          ? `<div>Fällig: ${escapeClassListText(shortDate(project.due))}</div>`
+          : ""}
+
+        <button class="smallbtn"
+          onclick="archiveProject('${project.id}')">
+          Abschließen und archivieren
+        </button>
+
+      </div>
+
+    `;
+
+  });
+
+  box.innerHTML=html;
+    const select=document.getElementById("openProjectSelect");
+
+if(select){
+
+  const currentValue=select.value;
+  const projects=load("projects",[]);
+
+  select.innerHTML=
+    `<option value="">Bitte Projekt auswählen</option>`;
+
+  projects.forEach(project=>{
+
+    const option=document.createElement("option");
+    option.value=project.id;
+    option.textContent=project.name;
+
+    select.appendChild(option);
+
+  });
+
+  select.value=currentValue;
+}
+
+}
+  
+  function renderOpenProject(){
+
+  const select=document.getElementById("openProjectSelect");
+  const box=document.getElementById("openProjectList");
+
+  if(!select || !box) return;
+
+  const projectId=select.value;
+
+  if(!projectId){
+    box.innerHTML="";
+    return;
+  }
+
+  const projects=load("projects",[]);
+  const participation=load("projectParticipation",{});
+  const paid=load("projectPaid",{});
+
+  const project=projects.find(p=>p.id===projectId);
+
+  if(!project){
+    box.innerHTML="";
+    return;
+  }
+
+  const openChildren=children.filter(child =>
+    participation[child.id] &&
+    participation[child.id][projectId] &&
+    !(paid[child.id] && paid[child.id][projectId])
+  );
+
+  if(!openChildren.length){
+
+    box.innerHTML=`
+      <div class="notice">
+        Alle teilnehmenden Kinder haben bezahlt. 🎉
+      </div>
+    `;
+
+    return;
+  }
+
+  let html="";
+
+  openChildren.forEach(child=>{
+
+    html+=`
+      <div class="child"
+           style="border-left-color:${childColor(child)}">
+           <strong>${escapeClassListText(child.name)}</strong>
+        
+        <div>${escapeClassListText(child.className)}</div>
+      </div>
+    `;
+
+  });
+
+  box.innerHTML=html;
+
+}
+  
+function archiveProject(projectId){
+
+  if(!confirm("Projekt abschließen und archivieren?")){
+    return;
+  }
+
+  const projects = load("projects", []);
+  const project = projects.find(p => p.id === projectId);
+
+  if(!project) return;
+
+  const archived = load("archivedProjects", []);
+
+  if(archived.some(p => p.id === projectId)){
+    alert("Dieses Projekt ist bereits archiviert.");
+    return;
+  }
+
+  archived.push(project);
+
+  save("archivedProjects", archived);
+  save("projects", projects.filter(p => p.id !== projectId));
+
+  renderProjects();
+  renderProjectArchive();
+}
+
+function renderProjectArchive(){
+
+  const listBox = document.getElementById("archivedProjectList");
+  const openBox = document.getElementById("archivedOpenPayments");
+
+  if(!listBox || !openBox) return;
+
+  const archived = load("archivedProjects", []);
+  const participation = load("projectParticipation", {});
+  const paid = load("projectPaid", {});
+  const dismissed = load("archivedDismissedPayments", {});
+ 
+  if(!archived.length){
+    listBox.innerHTML = "<p>Noch keine Projekte archiviert.</p>";
+    openBox.innerHTML = "<p>Keine offenen Beträge.</p>";
+    return;
+  }
+
+  let projectHtml = "";
+  let openHtml = "";
+  let totalOpen = 0;
+  let openCount = 0;
+
+  archived.forEach(project => {
+
+    projectHtml += `
+      
+      <div class="section">
+        <strong>${escapeClassListText(project.name)}</strong>
+
+        ${project.amount
+          ? `<div>Betrag pro Kind: ${escapeClassListText(project.amount)} €</div>`
+          : ""}
+
+        ${project.due
+          ? `<div>Fällig: ${escapeClassListText(shortDate(project.due))}</div>`
+          : ""}
+
+        <div style="margin-top:10px">
+          <strong>Teilnehmende Kinder:</strong>
+        </div>
+
+        ${(() => {
+          const participants = children.filter(child =>
+            participation[child.id] &&
+            participation[child.id][project.id]
+          );
+
+          if(!participants.length){
+            return "<div>Keine Teilnehmenden eingetragen.</div>";
+          }
+
+          return participants.map(child => {
+            const hasPaid =
+              paid[child.id] &&
+              paid[child.id][project.id];
+
+            return `
+              <div style="margin-top:5px; padding:5px; border-bottom:1px solid #ddd">
+                <span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${childColor(child)};margin-right:6px"></span>
+                ${escapeClassListText(child.name)} – ${escapeClassListText(child.className)}
+                <strong style="margin-left:6px">
+                  ${hasPaid ? "Bezahlt" : (dismissed[child.id] && dismissed[child.id][project.id] ? "Entfällt" : "Noch offen")}
+                </strong>
+              </div>
+            `;
+          }).join("");
+        })()}
+
+        <button class="smallbtn"
+          onclick="restoreProject('${project.id}')">
+          Zurück zu laufenden Projekten
+        </button>
+      </div>
+
+    `;
+
+    children.forEach(child => {
+
+      const tookPart =
+        participation[child.id] &&
+        participation[child.id][project.id];
+
+      const hasPaid =
+        paid[child.id] &&
+        paid[child.id][project.id];
+
+      if(tookPart && !hasPaid && !(dismissed[child.id] && dismissed[child.id][project.id])){
+
+        const amount = Number(project.amount) || 0;
+        totalOpen += amount;
+        openCount++;
+
+        openHtml += `
+          <div class="child"
+            style="border-left-color:${childColor(child)}">
+            <strong>${escapeClassListText(child.name)}</strong>
+            <div>${escapeClassListText(child.className)}</div>
+            <div>Projekt: ${escapeClassListText(project.name)}</div>
+            <div>Offen: ${amount.toFixed(2).replace(".", ",")} €</div>
+            
+
+<button class="smallbtn"
+
+  onclick="markArchivedPaymentPaid('${child.id}','${project.id}')">
+
+  Als bezahlt markieren
+
+</button>
+
+<button class="smallbtn"
+
+  onclick="removeArchivedOpenPayment('${child.id}','${project.id}')">
+
+  Offenen Eintrag löschen
+
+</button>
+          </div>
+        `;
+      }
+    });
+  });
+
+  listBox.innerHTML = projectHtml;
+
+  openBox.innerHTML = openCount
+    ? openHtml + `
+        <div class="section">
+          <strong>${openCount} offene Zahlung(en)</strong>
+          <div>Gesamt offen: ${totalOpen.toFixed(2).replace(".", ",")} €</div>
+        </div>
+        <button class="smallbtn" onclick="printArchivedOpenPayments()">
+          Offene Beträge drucken
+        </button>
+      `
+    : "<p>Keine offenen Beträge vorhanden.</p>";
+}
+  
+function markArchivedPaymentPaid(childId,projectId){
+
+  if(!confirm("Ist der Beitrag inzwischen bezahlt?")) return;
+
+  const paid = load("projectPaid",{});
+
+  if(!paid[childId]) paid[childId] = {};
+
+  paid[childId][projectId] = true;
+
+  save("projectPaid",paid);
+
+  const dismissed = load("archivedDismissedPayments",{});
+
+  if(dismissed[childId]){
+    delete dismissed[childId][projectId];
+    save("archivedDismissedPayments",dismissed);
+  }
+
+  renderProjectArchive();
+}
+
+
+function removeArchivedOpenPayment(childId,projectId){
+
+  if(!confirm("Soll diese offene Forderung entfernt werden? Die Projektteilnahme bleibt erhalten.")) return;
+
+  const dismissed = load("archivedDismissedPayments",{});
+
+  if(!dismissed[childId]) dismissed[childId] = {};
+
+  dismissed[childId][projectId] = true;
+
+  save("archivedDismissedPayments",dismissed);
+
+  renderProjectArchive();
+}
+
+
+function restoreProject(projectId){
+
+  if(!confirm("Projekt wieder zu den laufenden Projekten verschieben?")){
+    return;
+  }
+
+  const archived = load("archivedProjects", []);
+  const project = archived.find(p => p.id === projectId);
+
+  if(!project) return;
+
+  const projects = load("projects", []);
+
+  projects.push(project);
+
+  save("projects", projects);
+  save("archivedProjects", archived.filter(p => p.id !== projectId));
+
+  renderProjects();
+  renderProjectArchive();
+}
+
+function printArchivedOpenPayments(){
+
+  const box = document.getElementById("archivedOpenPayments");
+
+  if(!box) return;
+
+  const printWindow = window.open("", "_blank");
+
+  if(!printWindow){
+    alert("Bitte erlaube das Öffnen des Druckfensters.");
+    return;
+  }
+
+  printWindow.document.write(`
+    <!doctype html>
+    <html lang="de">
+    <head>
+      <meta charset="utf-8">
+      <title>Offene Projektzahlungen</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 20px;
+        }
+        h1 {
+          font-size: 20px;
+        }
+        .child, .section {
+          border: 1px solid #ccc;
+          padding: 8px;
+          margin-bottom: 8px;
+          break-inside: avoid;
+        }
+        button {
+          display: none;
+        }
+        @media print {
+          body { padding: 0; }
+        }
+      </style>
+    </head>
+    <body>
+      <h1>Offene Beträge aus archivierten Projekten</h1>
+      ${box.innerHTML}
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+  printWindow.close();
+}
+
+/* -------------------------
+   OBSTGELD
+------------------------- */
+
+function saveFruitAmount(){
+
+  const year=document.getElementById("fruitSchoolYear").value;
+  const input=document.getElementById("fruitAmount");
+  const amount=Number(input.value);
+
+  if(input.value==="" || !Number.isFinite(amount) || amount<0){
+    alert("Bitte einen gültigen Betrag eingeben.");
+    return;
+  }
+
+  const amounts=load("fruitAmounts",{});
+  amounts[year]=amount;
+
+  save("fruitAmounts",amounts);
+  renderFruitMoney();
+}
+
+function toggleFruitPaid(childId){
+
+  const year=document.getElementById("fruitSchoolYear").value;
+  const payments=load("fruitPayments",{});
+
+  if(!payments[year]){
+    payments[year]={};
+  }
+
+  payments[year][childId]=!payments[year][childId];
+
+  save("fruitPayments",payments);
+  renderFruitMoney();
+}
+
+function renderFruitMoney(){
+
+  const year=document.getElementById("fruitSchoolYear").value;
+  const amounts=load("fruitAmounts",{});
+  const payments=load("fruitPayments",{});
+
+  const amount=amounts[year] ?? 20;
+
+  document.getElementById("fruitAmount").value=amount;
+
+  const paid=payments[year] || {};
+
+  const classGroups=[
+    {title:"Klasse 1", matches:c=>c.className.startsWith("Klasse 1")},
+    {title:"Klasse 2", matches:c=>c.className.startsWith("Klasse 2")},
+    {title:"Klasse 3", matches:c=>c.className==="Klasse 3"},
+    {title:"Klasse 4", matches:c=>c.className==="Klasse 4"}
+  ];
+
+  let openCount=0;
+  let paidCount=0;
+
+  function makeColumns(isPaid){
+
+    return '<div class="fruit-class-grid">' +
+      classGroups.map(group=>{
+
+        const groupChildren=children.filter(child=>
+          !inactiveChildren[child.id] &&
+          group.matches(child) &&
+          (!!paid[child.id])===isPaid
+        );
+
+        let rows="";
+
+        groupChildren.forEach(child=>{
+
+          rows+=`
+            <div class="child"
+                 style="border-left-color:${childColor(child)}">
+
+              <strong>${escapeClassListText(child.name)}</strong>
+              <div class="classname">${escapeClassListText(child.className)}</div>
+              <div>${amount.toFixed(2).replace(".",",")} €</div>
+
+              <label>
+                <input type="checkbox"
+                  ${isPaid ? "checked" : ""}
+                  onchange="toggleFruitPaid('${child.id}')">
+                Bezahlt
+              </label>
+
+            </div>
+          `;
+
+          if(isPaid){
+            paidCount++;
+          }else{
+            openCount++;
+          }
+        });
+
+        return `
+          <div class="fruit-class-column">
+            <h4>${group.title}</h4>
+            ${rows || "<p>Keine Kinder</p>"}
+          </div>
+        `;
+
+      }).join("") +
+    '</div>';
+  }
+
+  const openHtml=makeColumns(false);
+  const paidHtml=makeColumns(true);
+
+  document.getElementById("fruitOpenList").innerHTML=
+    `<p><strong>${openCount} offene Zahlungen</strong></p>`+
+    (openCount ? openHtml : "<p>Alle Kinder haben bezahlt.</p>");
+
+  document.getElementById("fruitPaidList").innerHTML=
+    `<p><strong>${paidCount} bezahlte Beiträge</strong></p>`+
+    (paidCount ? paidHtml : "<p>Noch keine Zahlungen erfasst.</p>");
+
+}
+
+
+
+/* -------------------------
+   KLASSENLISTEN
+------------------------- */
+
+function createClassList(){
+
+  const name = document.getElementById("classListName").value.trim();
+  const className = document.getElementById("classListClass").value;
+
+  const headings = [
+    document.getElementById("classListHeading1").value.trim() || "Spalte 1",
+    document.getElementById("classListHeading2").value.trim() || "Spalte 2",
+    document.getElementById("classListHeading3").value.trim() || "Spalte 3"
+  ];
+
+  if(!name){
+    alert("Bitte gib der Liste einen Namen.");
+    return;
+  }
+
+  const lists = load("customClassLists", []);
+  const id = "liste_" + Date.now();
+
+  lists.push({
+    id: id,
+    name: name,
+    className: className,
+    headings: headings,
+    entries: {}
+  });
+
+  save("customClassLists", lists);
+
+  
+  document.getElementById("classListName").value = "";
+  document.getElementById("classListHeading1").value = "";
+  document.getElementById("classListHeading2").value = "";
+  document.getElementById("classListHeading3").value = "";
+  renderClassLists();
+}
+
+
+function renderClassLists(){
+
+  const area = document.getElementById("classListArea");
+  if(!area) return;
+
+  const lists = load("customClassLists", []);
+
+  if(lists.length === 0){
+    area.innerHTML = "<p>Noch keine Klassenliste erstellt.</p>";
+    return;
+  }
+
+  let html = "";
+
+  lists.forEach(list => {
+
+    const listChildren = children.filter(child =>
+  !inactiveChildren[child.id] &&
+  (list.className === "all" ||
+   child.className === list.className)
+);
+
+    html += `
+      <div class="section">
+        <h3>${escapeClassListText(list.name)}</h3>
+        <p>${escapeClassListText(list.className === "all" ? "Alle Kinder" : list.className)}</p>
+
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Kind</th>
+                ${list.headings.map((heading,index) =>
+                  `<th>${escapeClassListText(heading)}</th>`
+                ).join("")}
+              </tr>
+            </thead>
+            <tbody>
+              ${listChildren.map(child => {
+
+                const entry = list.entries[child.id] || [
+                  {checked:false,text:""},
+                  {checked:false,text:""},
+                  {checked:false,text:""}
+                ];
+
+                return `
+                  <tr>
+                    <td>${escapeClassListText(child.name)}</td>
+                    ${entry.map((item,index) => `
+                      <td>
+                        <label>
+                          <input type="checkbox"
+                            ${item.checked ? "checked" : ""}
+                            onchange="updateClassListEntry('${list.id}','${child.id}',${index},'checked',this.checked)">
+                        </label>
+                        <input type="text"
+                          value="${escapeClassListText(item.text)}"
+                          placeholder="Eintrag"
+                          onchange="updateClassListEntry('${list.id}','${child.id}',${index},'text',this.value)">
+                      </td>
+                    `).join("")}
+                  </tr>
+                `;
+              }).join("")}
+            </tbody>
+          </table>
+        </div>
+
+        <button class="smallbtn"
+          onclick="printClassList('${list.id}')">
+          Diese Liste drucken
+        </button>
+
+        <button class="smallbtn"
+          onclick="deleteClassList('${list.id}')">
+          Liste löschen
+        </button>
+      </div>
+    `;
+  });
+
+  area.innerHTML = html;
+}
+
+function updateClassListEntry(listId, childId, index, field, value){
+
+  const lists = load("customClassLists", []);
+  const list = lists.find(item => item.id === listId);
+
+  if(!list) return;
+
+  if(!list.entries[childId]){
+    list.entries[childId] = [
+      {checked:false,text:""},
+      {checked:false,text:""},
+      {checked:false,text:""}
+    ];
+  }
+
+  list.entries[childId][index][field] = value;
+
+  save("customClassLists", lists);
+}
+
+function deleteClassList(listId){
+
+  if(!confirm("Möchtest du diese Liste wirklich löschen?")) return;
+
+  const lists = load("customClassLists", [])
+    .filter(list => list.id !== listId);
+
+  save("customClassLists", lists);
+  renderClassLists();
+}
+
+function escapeClassListText(value){
+
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+  
+function printClassList(listId){
+
+  const lists = load("customClassLists", []);
+  const list = lists.find(item => item.id === listId);
+
+  if(!list) return;
+
+  const listChildren = children.filter(child =>
+  !inactiveChildren[child.id] &&
+  (list.className === "all" ||
+   child.className === list.className)
+);
+
+  const rows = listChildren.map(child => {
+
+    const entry = list.entries[child.id] || [
+      {checked:false,text:""},
+      {checked:false,text:""},
+      {checked:false,text:""}
+    ];
+
+    return `
+      <tr>
+        <td>${escapeClassListText(child.name)}</td>
+        ${entry.map(item => `
+          <td>
+            ${item.checked ? "☒" : "☐"}
+            ${escapeClassListText(item.text)}
+          </td>
+        `).join("")}
+      </tr>
+    `;
+  }).join("");
+
+  const printWindow = window.open("", "_blank");
+
+  if(!printWindow){
+    alert("Bitte erlaube das Öffnen des Druckfensters.");
+    return;
+  }
+
+  printWindow.document.write(`
+    <!doctype html>
+    <html lang="de">
+    <head>
+      <meta charset="utf-8">
+      <title>${escapeClassListText(list.name)}</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          padding: 15px;
+        }
+        h1 {
+          font-size: 20px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        th, td {
+          border: 1px solid #777;
+          padding: 6px;
+          text-align: left;
+          vertical-align: top;
+        }
+        th {
+          background: #eee;
+        }
+        @media print {
+          body { padding: 0; }
+          tr { break-inside: avoid; }
+        }
+      </style>
+    </head>
+    <body>
+      <h1>${escapeClassListText(list.name)}</h1>
+      <p>${escapeClassListText(list.className === "all" ? "Alle Kinder" : list.className)}</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Kind</th>
+            ${list.headings.map(heading =>
+              `<th>${escapeClassListText(heading)}</th>`
+            ).join("")}
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+}
+
+
+/* -------------------------
+   DATUM
+------------------------- */
+
+function goToday(){
+  document.getElementById("selectedDate").value=todayString();
+  renderDailyPlan();
+}
+
+/* -------------------------
+   TAGESPLANUNG
+------------------------- */
+
+function renderDailyPlan(){
+
+  const date=
+    document.getElementById("selectedDate").value ||
+    todayString();
+
+  document.getElementById("selectedDate").value=date;
+
+  document.getElementById("regularPlanning").style.display="none";
+  document.getElementById("dailyPlanning").style.display="block";
+
+  document.getElementById("dateInfo").innerHTML=
+    `<strong>${escapeClassListText(formatDate(date))}</strong>
+     – Tippe hier die Planung für genau diesen Tag ein.`;
+
+  let html="";
+
+  classes.forEach((cls,index)=>{
+  if(index % 2 === 0){
+    html += '<div class="daily-plan-row">';
+  }
+
+    html+=`
+      <div class="section">
+        <h3>${cls[0]}</h3>
+    `;
+
+    
+children
+  .filter(c=>c.className===cls[0] && !inactiveChildren[c.id])
+  .forEach(c=>{
+
+
+        const plan=getPlan(c.id,date);
+
+        html+=`
+          <div id="daily-plan-${c.id}" class="child
+            ${plan.time ? "planned":""}
+            ${plan.exception ? "exception":""}"
+            style="border-left-color:${childColor(c)}">
+
+            <div class="childtitle">
+                            ${escapeClassListText(c.name)}
+              ${plan.exception
+                ? `<span class="classname">Ausnahme für diesen Tag</span>`
+                : `<span class="classname">regelmäßige Planung</span>`
+              }
+            </div>
+
+            <div class="controls">
+<select
+  onchange="changeDailyPlan('${date}','${c.id}',this.value,null)">
+  ${options(
+  plan.time && !times.includes(plan.time)
+    ? [...times, plan.time]
+    : times,
+  plan.time
+)}
+</select>
+
+
+
+<input
+
+  type="time"
+
+  value=""
+
+  onfocus="this.dataset.oldValue=this.value"
+
+  onchange="changeDailyPlan('${date}','${c.id}',this.value,null)"
+
+  
+
+  title="Eigene Uhrzeit eingeben">
+ 
+  <select
+
+  onchange="changeDailyPlan('${date}','${c.id}',null,this.value)">
+
+  ${typeOptions(plan.type)}
+
+</select>
+
+  <input
+
+  type="text"
+
+  value="${escapeClassListText(plan.info || "")}"
+
+  placeholder="Info"
+
+  oninput="changeDailyPlan('${date}','${c.id}',null,null,this.value)"
+
+  title="Zusätzliche Information">
+
+ <button
+
+  type="button"
+
+  class="smallbtn"
+
+  onclick="confirmDailyInfo('${date}','${c.id}',this.previousElementSibling)">
+
+  ✓
+
+ </button>
+              
+
+              ${
+                plan.exception
+                ?
+                `<button class="smallbtn"
+                   onclick="useRegular('${date}','${c.id}')">
+                   Regelmäßig verwenden
+                 </button>`
+                :
+                ""
+              }
+
+            </div>
+
+          </div>
+        `;
+      });
+
+    
+    html+="</div>";
+
+    if(index % 2 === 1 || index === classes.length - 1){
+      html += '</div>';
+    }
+  });
+
+  document.getElementById("dailyPlanning").innerHTML=html;
+}
+
+
+  
+
+
+function changeDailyPlan(date,id,time,type,info){
+
+  const old = getPlan(id,date);
+
+  const updated = {
+    time: time === null ? old.time : time,
+    type: type === null ? old.type : type,
+    info: info === undefined ? (old.info || "") : info
+  };
+
+  if(!dailyPlans[date]){
+    dailyPlans[date] = {};
+  }
+
+  dailyPlans[date][id] = updated;
+  save("dailyPlans",dailyPlans);
+
+  const card = document.getElementById("daily-plan-" + id);
+
+  if(!card) return;
+
+  const selects = card.querySelectorAll("select");
+  const manual = card.querySelector('input[type="time"]');
+
+  if(time !== null && selects[0]){
+    let found = false;
+
+    for(const option of selects[0].options){
+      if(option.value === time){
+        found = true;
+        break;
+      }
+    }
+
+    if(!found){
+      const option = document.createElement("option");
+      option.value = time;
+      option.textContent = time;
+      selects[0].appendChild(option);
+    }
+
+    selects[0].value = time;
+
+    if(manual){
+      manual.value = "";
+    }
+  }
+
+  if(type !== null && selects[1]){
+    selects[1].value = type;
+  }
+
+  card.classList.add("exception");
+
+  if(updated.time){
+    card.classList.add("planned");
+  } else {
+    card.classList.remove("planned");
+  }
+
+  const label = card.querySelector(".classname");
+
+  if(label){
+    label.textContent = "Ausnahme für diesen Tag";
+  }
+
+ let regularButton = [...card.querySelectorAll(".smallbtn")].find(button => button.textContent.trim() === "Regelmäßig verwenden");
+
+  if(!regularButton){
+    regularButton = document.createElement("button");
+    regularButton.className = "smallbtn";
+    regularButton.textContent = "Regelmäßig verwenden";
+    regularButton.onclick = () => useRegular(date,id);
+    card.querySelector(".controls").appendChild(regularButton);
+  }
+}
+
+function confirmDailyInfo(date,id,input){
+  changeDailyPlan(date,id,null,null,input.value);
+  input.blur();
+}
+
+function useRegular(date,id){
+
+  if(dailyPlans[date]){
+    delete dailyPlans[date][id];
+
+    if(Object.keys(dailyPlans[date]).length === 0){
+      delete dailyPlans[date];
+    }
+  }
+
+  save("dailyPlans",dailyPlans);
+
+  renderDailyPlan();
+}
+
+/* -------------------------
+   REGELMÄSSIGE WOCHE
+------------------------- */
+
+function showRegular(){
+
+  document.getElementById("dailyPlanning").style.display="none";
+  document.getElementById("regularPlanning").style.display="block";
+
+  let html=`
+    <div class="section">
+
+      <h2>Regelmäßige Woche</h2>
+
+      <div class="notice">
+        Diese Planung gilt automatisch für alle zukünftigen
+        entsprechenden Wochentage. Eine einzelne Tagesplanung
+        kann sie jederzeit überschreiben.
+      </div>
+
+      <div class="regular-head">
+        <div>Kind</div>
+        <div>Mo</div>
+        <div>Di</div>
+        <div>Mi</div>
+        <div>Do</div>
+        <div>Fr</div>
+      </div>
+  `;
+
+  classes.forEach(cls=>{
+
+    html+=`<h3>${cls[0]}</h3>`;
+
+    
+children
+      .filter(c=>c.className===cls[0] && !inactiveChildren[c.id])
+      .forEach(c=>{
+
+
+        html+=`
+          <div class="regular-row">
+
+            <div>
+                            <strong>${escapeClassListText(c.name)}</strong>
+            </div>
+        `;
+
+        for(let wd=1;wd<=5;wd++){
+
+          const p=
+            regularPlans[c.id]?.[wd] ||
+            {time:"",type:""};
+
+          html+=`
+            <div class="daybox">
+
+              <select
+                onchange="changeRegular('${c.id}',${wd},'time',this.value)">
+                ${options(times,p.time)}
+              </select>
+
+              <select
+                onchange="changeRegular('${c.id}',${wd},'type',this.value)">
+                ${typeOptions(p.type)}
+              </select>
+
+            </div>
+          `;
+        }
+
+        html+="</div>";
+      });
+  });
+
+  html+=`
+      </div>
+  `;
+
+  document.getElementById("regularPlanning").innerHTML=html;
+}
+
+function changeRegular(id,wd,field,value){
+
+  if(!regularPlans[id]){
+    regularPlans[id]={};
+  }
+
+  if(!regularPlans[id][wd]){
+    regularPlans[id][wd]={
+      time:"",
+      type:""
+    };
+  }
+
+  regularPlans[id][wd][field]=value;
+
+  save("regularPlans",regularPlans);
+}
+
+/* -------------------------
+   WER GEHT HEUTE?
+------------------------- */
+let checkedGoing=load("checkedGoing",{});
+
+function toggleGoing(id){
+
+  checkedGoing[id]=!checkedGoing[id];
+save("checkedGoing",checkedGoing);
+
+  renderGoing();
+
+}
+function renderGoing(){
+
+  const date=todayString();
+
+  const list=[];
+
+  children.filter(c=>!inactiveChildren[c.id]).forEach(c=>{
+
+    const p=getPlan(c.id,date);
+
+    if(p.time && p.type !== "-"){
+
+      list.push({
+        child:c,
+        time:p.time,
+        type:p.type,
+        info:p.info || ""
+      });
+    }
+  });
+
+  list.sort((a,b)=>
+    a.time.localeCompare(b.time)
+  );
+
+  if(!list.length){
+
+    document.getElementById("goingList").innerHTML=
+      `<div class="notice">
+        Für heute ist noch keine Abhol-/Gehplanung eingetragen.
+      </div>`;
+
+    return;
+  }
+
+  let html="";
+let lastTime="";
+
+list.forEach(x=>{
+
+  if(lastTime && lastTime !== x.time){
+
+    html+=`
+      <div class="going-time-separator"></div>
+    `;
+
+  }
+
+  html+=`
+    <div class="going"
+      style="border-left:7px solid ${childColor(x.child)}">
+
+      <div class="time">${escapeClassListText(x.time)}</div>
+
+      <div>
+                <input
+
+          type="checkbox"
+
+          ${checkedGoing[x.child.id] ? "checked" : ""}
+
+          onchange="toggleGoing('${x.child.id}')">
+        <strong>${escapeClassListText(x.child.name)}</strong>
+      </div>
+
+      <div class="type">${escapeClassListText(x.type || "")}</div>
+      ${x.info ? `<div class="going-info">${escapeClassListText(x.info)}</div>` : ""}
+    </div>
+  `;
+
+  lastTime=x.time;
+
+});
+
+  document.getElementById("goingList").innerHTML=html;
+}
+  
+
+let flexChildren=load("flexChildren",["kind1"]);
+  let archivedFlexChildren=load("archivedFlexChildren",[]);
+function toggleFlexChild(id, enabled){
+
+  if(enabled){
+
+    if(!flexChildren.includes(id)){
+      flexChildren.push(id);
+    }
+
+  }else{
+
+    flexChildren = flexChildren.filter(childId=>childId!==id);
+
+  }
+
+  save("flexChildren", flexChildren);
+
+  renderFlex();
+}
+
+  function renderFlex(){
+
+  let html="";
+
+  
+children.filter(c=>!inactiveChildren[c.id] && !archivedFlexChildren.includes(c.id)).forEach(c=>{
+
+
+    if(!flexChildren.includes(c.id)) return;
+
+    const days=[];
+
+    Object.keys(attendance).forEach(date=>{
+      if(date< "2026-09-01" || date > "2027-08-31") return;
+
+      const a=attendance[date]?.[c.id];
+
+      if(!a || !a.gehen) return;
+
+      const time=a.gehen;
+
+      if(time > "13:20"){
+
+        days.push({
+          date:date,
+          time:time
+        });
+
+      }
+
+    });
+
+    days.sort((a,b)=>a.date.localeCompare(b.date));
+
+    const count=days.length;
+    const remaining=Math.max(0,50-count);
+
+    let warning="";
+
+    if(count>=50){
+
+      warning=`
+        <div class="notice">
+          🚨 50 von 50 Flex-Tagen genutzt – Kontingent erreicht.
+        </div>
+      `;
+
+    }else if(count>=45){
+
+      warning=`
+        <div class="notice">
+          ⚠️ Nur noch ${remaining} Flex-Tage verfügbar.
+        </div>
+      `;
+
+    }
+
+    let daysHtml="";
+
+    if(days.length){
+
+      daysHtml=`
+        <table>
+
+          <tr>
+            <th>Nr.</th>
+            <th>Datum</th>
+            <th>Gehzeit</th>
+          </tr>
+        
+          ${days.map((d,i)=>`
+            <tr>
+              <td>${i+1}</td>
+              <td>${escapeClassListText(formatDate(d.date))}</td>
+              <td>${escapeClassListText(d.time)}</td>
+            </tr>
+          `).join("")}
+          
+
+        </table>
+      `;
+
+    }else{
+
+      daysHtml=`
+        <div class="notice">
+          Noch keine Flex-Tage eingetragen.
+        </div>
+      `;
+
+    }
+
+    html+=`
+      <div class="section">
+
+        <h3>${escapeClassListText(c.name)}</h3>
+        <button class="smallbtn"
+        onclick="printFlex('${c.id}')">
+        Flex-Tage drucken
+        </button>
+<button class="smallbtn"
+onclick="archiveFlexChild('${c.id}')">
+Flex-Kind archivieren
+</button>
+        <div>
+          <strong>${count} von 50 Flex-Tagen genutzt</strong>
+        </div>
+
+        <div>
+          Noch ${remaining} Tage verfügbar
+        </div>
+
+        ${warning}
+
+        ${daysHtml}
+
+      </div>
+    `;
+
+  });
+
+  if(!html){
+
+    html=`
+      <div class="notice">
+        Noch keine Flex-Kinder festgelegt.
+      </div>
+    `;
+
+  }
+
+  document.getElementById("flexList").innerHTML=html;
+
+}
+  
+
+function archiveFlexChild(id){
+
+  if(!archivedFlexChildren.includes(id)){
+    archivedFlexChildren.push(id);
+  }
+
+  flexChildren = flexChildren.filter(childId=>childId!==id);
+
+  save("flexChildren",flexChildren);
+  save("archivedFlexChildren",archivedFlexChildren);
+
+  renderFlex();
+  renderArchive();
+}
+
+function restoreFlexChild(id){
+
+  archivedFlexChildren =
+    archivedFlexChildren.filter(childId=>childId!==id);
+
+  if(!flexChildren.includes(id)){
+    flexChildren.push(id);
+  }
+
+  save("flexChildren",flexChildren);
+  save("archivedFlexChildren",archivedFlexChildren);
+
+  renderFlex();
+  renderArchive();
+}
+
+
+function printFlex(id){
+
+  const child=children.find(c=>c.id===id);
+
+  if(!child) return;
+
+  const days=[];
+
+  Object.keys(attendance).forEach(date=>{
+
+    if(date < "2026-09-01" || date > "2027-08-31") return;
+
+    const a=attendance[date]?.[id];
+
+    if(!a || !a.gehen) return;
+
+    if(a.gehen > "13:20"){
+
+      days.push({
+        date:date,
+        time:a.gehen
+      });
+
+    }
+
+  });
+
+  days.sort((a,b)=>a.date.localeCompare(b.date));
+
+  const count=days.length;
+  const remaining=Math.max(0,50-count);
+
+  let rows="";
+
+  days.forEach((d,i)=>{
+
+        rows+=`
+      <tr>
+        <td>${i+1}</td>
+        <td>${escapeClassListText(formatDate(d.date))}</td>
+        <td>${escapeClassListText(d.time)}</td>
+      </tr>
+    `;
+
+  });
+
+  const printWindow=window.open("","_blank");
+
+  printWindow.document.write(`
+    <!doctype html>
+    <html lang="de">
+    <head>
+
+      <meta charset="utf-8">
+
+      <title>Flex-Tage ${escapeClassListText(child.name)}</title>
+
+      <style>
+
+        body{
+          font-family:Arial,sans-serif;
+          margin:30px;
+          color:#222;
+        }
+
+        h1{
+          margin-bottom:5px;
+        }
+
+        h2{
+          margin-top:0;
+          font-weight:normal;
+        }
+
+        .summary{
+          margin:20px 0;
+          font-size:18px;
+        }
+
+        table{
+          width:100%;
+          border-collapse:collapse;
+          margin-top:20px;
+        }
+
+        th,td{
+          border:1px solid #999;
+          padding:8px;
+          text-align:left;
+        }
+
+        th{
+          font-weight:bold;
+        }
+
+        .footer{
+          margin-top:30px;
+          font-size:12px;
+        }
+
+      </style>
+
+    </head>
+
+    <body>
+
+      <h1>Flex-Tage</h1>
+
+      <h2>${escapeClassListText(child.name)}</h2>
+
+      <div class="summary">
+        <strong>Schuljahr 2026/2027</strong><br>
+        ${count} von 50 Flex-Tagen genutzt<br>
+        Noch ${remaining} Tage verfügbar
+      </div>
+
+      <table>
+
+        <tr>
+          <th>Nr.</th>
+          <th>Datum</th>
+          <th>Gehzeit</th>
+        </tr>
+
+        ${rows}
+
+      </table>
+
+      <div class="footer">
+        Flex-Tag zählt bei einer tatsächlichen Gehzeit nach 13:20 Uhr.
+      </div>
+
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+
+  printWindow.focus();
+
+  printWindow.print();
+
+}        
+/* -------------------------
+   START
+------------------------- */
+
+document.getElementById("selectedDate").value=todayString();
+
+showTab("heute");
+
+/* Service Worker */
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js");
+}
+/* -------------------------
+   WOCHENÜBERSICHT
+------------------------- */
+
+function mondayOf(dateString){
+  const d=new Date(dateString+"T12:00:00");
+  const day=d.getDay();
+  const diff=day===0 ? -6 : 1-day;
+  d.setDate(d.getDate()+diff);
+  return d.toISOString().slice(0,10);
+}
+
+function addDays(dateString,days){
+  const d=new Date(dateString+"T12:00:00");
+  d.setDate(d.getDate()+days);
+  return d.toISOString().slice(0,10);
+}
+
+function shortDate(dateString){
+  const d=new Date(dateString+"T12:00:00");
+  return d.toLocaleDateString("de-DE",{
+    day:"2-digit",
+    month:"2-digit",
+    year:"numeric"
+  });
+}
+
+function renderWeeklyOverview(){
+
+  const picker=document.getElementById("weekPicker");
+  if(!picker) return;
+if(!picker.value) picker.value=todayString();
+  const monday=mondayOf(picker.value || todayString());
+  picker.value=monday;
+
+  const days=[
+    addDays(monday,0),
+    addDays(monday,1),
+    addDays(monday,2),
+    addDays(monday,3),
+    addDays(monday,4)
+  ];
+
+  const names=["Mo","Di","Mi","Do","Fr"];
+
+  let html=`
+
+  <div class="weekly-print-area">
+
+    <div class="weekly-title">
+
+      Wochenübersicht
+
+    </div>
+
+    <div class="weekly-subtitle">
+
+      ${shortDate(days[0])} – ${shortDate(days[4])}
+
+    </div>
+
+    <table class="weekly-table">
+
+      <thead>
+
+        <tr>
+
+          <th class="child-col">Kind</th>
+
+`;
+
+days.forEach((day,i)=>{
+
+const ferien=getFerien(day);
+const feiertag=ferien ? "" : getFeiertag(day);
+const geschlossen=closedDays[day] || "";
+
+let hinweis="";
+
+if(geschlossen){
+
+  hinweis=`
+    🔒 ${escapeClassListText(geschlossen)}
+    <br>
+    <button
+      class="smallbtn"
+      onclick="reopenDay('${day}')">
+      Schließung aufheben
+    </button>
+  `;
+
+}else if(ferien){
+
+  hinweis=ferien.name;
+
+}else if(feiertag){
+
+  hinweis=feiertag;
+
+}
+
+  html+=`
+
+    <th colspan="2" class="day-col ${i>0 ? "day-start":""}">
+
+      ${names[i]}<br>
+
+      <span>${shortDate(day)}</span>
+
+      ${hinweis
+        ? `<div class="day-holiday">${hinweis}</div>`
+        : ""
+      }
+
+    </th>
+
+  `;
+
+});
+html+=`
+
+        </tr>
+
+        <tr class="subhead">
+
+          <th></th>
+
+`;
+
+days.forEach((day,i)=>{
+
+  html+=`
+
+    <th class="${i>0 ? "day-start":""}">An</th>
+
+    <th>Ab</th>
+
+  `;
+
+});
+
+html+=`
+
+        </tr>
+
+      </tbody>
+
+      <tbody>
+
+`;
+
+/* Erste Seite: Klasse 1 Affen bis Klasse 2 Zebra */
+
+classes.slice(0,4).forEach(cls=>{
+
+  html+=`
+
+    <tr class="class-row">
+
+      <td colspan="11">${cls[0]}</td>
+
+    </tr>
+
+  `;
+
+  children
+
+    .filter(c=>c.className===cls[0] && !inactiveChildren[c.id])
+
+    .forEach(c=>{
+
+      html+=`
+
+        <tr>
+
+          <td class="child-name">
+
+            ${escapeClassListText(c.name)}
+
+          </td>
+
+      `;
+
+      days.forEach((day,i)=>{
+
+        const a=attendance[day]?.[c.id] || {};
+
+        html+=`
+
+          <td class="${i>0 ? "day-start":""}">
+
+            ${escapeClassListText(a.ankommen || "–")}
+
+          </td>
+
+          <td>
+
+            ${escapeClassListText(a.gehen || "–")}
+
+          </td>
+
+        `;
+
+      });
+
+      html+=`</tr>`;
+
+    });
+
+});
+
+html+=`
+
+      </tbody>
+
+    </table>
+
+    <div class="weekly-page-break"></div>
+
+    <table class="weekly-table weekly-second-table">
+
+      <tbody>
+
+        <tr>
+
+          <th class="child-col">Kind</th>
+
+`;
+
+days.forEach((day,i)=>{
+
+const ferien=getFerien(day);
+const feiertag=ferien ? "" : getFeiertag(day);
+const geschlossen=closedDays[day] || "";
+
+let hinweis="";
+
+if(geschlossen){
+
+  hinweis=`
+    🔒 ${escapeClassListText(geschlossen)}
+    <br>
+    <button
+      class="smallbtn"
+      onclick="reopenDay('${day}')">
+      Schließung aufheben
+    </button>
+  `;
+
+}else if(ferien){
+
+  hinweis=ferien.name;
+
+}else if(feiertag){
+
+  hinweis=feiertag;
+
+}
+
+  html+=`
+
+    <th colspan="2" class="day-col ${i>0 ? "day-start":""}">
+
+      ${names[i]}<br>
+
+      <span>${shortDate(day)}</span>
+
+      ${hinweis
+        ? `<div class="day-holiday">${hinweis}</div>`
+        : ""
+      }
+
+    </th>
+
+  `;
+
+});
+
+html+=`
+
+        </tr>
+
+        <tr class="subhead">
+
+          <th></th>
+
+`;
+
+days.forEach((day,i)=>{
+
+  html+=`
+
+    <th class="${i>0 ? "day-start":""}">An</th>
+
+    <th>Ab</th>
+
+  `;
+
+});
+
+html+=`
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+`;
+
+/* Zweite Seite: Klasse 3 und Klasse 4 */
+
+classes.slice(4).forEach(cls=>{
+
+  html+=`
+
+    <tr class="class-row">
+
+      <td colspan="11">${cls[0]}</td>
+
+    </tr>
+
+  `;
+
+  children
+
+    .filter(c=>c.className===cls[0] && !inactiveChildren[c.id])
+
+    .forEach(c=>{
+
+      html+=`
+
+        <tr>
+
+          <td class="child-name">
+
+            ${escapeClassListText(c.name)}
+
+          </td>
+
+      `;
+
+      days.forEach((day,i)=>{
+
+        const a=attendance[day]?.[c.id] || {};
+
+        html+=`
+
+          <td class="${i>0 ? "day-start":""}">
+
+            ${escapeClassListText(a.ankommen || "–")}
+
+          </td>
+
+          <td>
+
+            ${escapeClassListText(a.gehen || "–")}
+
+          </td>
+
+        `;
+
+      });
+
+      html+=`</tr>`;
+
+    });
+
+});
+
+html+=`
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+`;
+
+document.getElementById("weeklyOverview").innerHTML=html;
+}
+</script>
+
+</body>
+</html>
