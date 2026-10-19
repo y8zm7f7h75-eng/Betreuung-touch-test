@@ -1143,24 +1143,25 @@ function getFeiertag(date){
    SPEICHER
 ------------------------- */
 
+
 function load(key, fallback){
   try{
-    const x=localStorage.getItem(key);
+    const x=localStorage.getItem("betreuung_test_"+key);
     return x ? JSON.parse(x) : fallback;
   }catch(e){
     return fallback;
   }
 }
 
-
 function save(key,value){
   try{
-    localStorage.setItem(key,JSON.stringify(value));
+    localStorage.setItem("betreuung_test_"+key,JSON.stringify(value));
   }catch(e){
     alert("Die Daten konnten nicht gespeichert werden. Bitte prüfe den verfügbaren Speicherplatz.");
     console.error("Speicherfehler:",e);
   }
 }
+
 
 function closeDay(date,reason){
 
